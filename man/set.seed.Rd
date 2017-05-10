@@ -1,0 +1,76 @@
+\name{set.seed}
+\alias{set.seed}
+
+\title{Seeding Random Variate Generators}
+\description{
+  \code{set.seed} in the \code{simEd} package allows the user to simultaneously
+  set the initial seed for both the \code{stats} and \code{simEd} variate
+  generators.
+}
+\usage{
+  set.seed(seed, kind = NULL, normal.kind = NULL)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{seed}{a single value, interpreted as an integer, or \code{NULL} (see 'Details')}
+  \item{kind}{character or \code{NULL}. This is passed verbatim to
+                \code{base::set.seed}.}
+  \item{normal.kind}{character or \code{NULL}. This is passed verbatim to
+                \code{base::set.seed}.}
+}
+\details{
+  This function intentionally masks the \code{base::set.seed} function, allowing
+  the user to simultaneously set the initial seed for the \code{stats} variate
+  generators (by explicitly calling \code{base::set.seed}) and for the
+  \code{simEd} variate generators (by explicitly setting up 10 streams using the
+  \code{rstream.mrg32k3a} generator from the \code{rstream} package).
+
+  Any call to \code{set.seed} re-initializes the seed for the \code{stats} and
+  \code{simEd} generators as if no seed had been set.
+  If called with \code{seed = NULL}, both the \code{stats} and \code{simEd} variate
+  generators are re-initialized using a random seed.
+
+  If the user wishes to set the seed for the \code{stats} generators without
+  affecting the seeds of the \code{simEd} generators, an explicit call to
+  \code{base::set.seed} can be made.
+
+  Note that once \code{set.seed} is called, advancing the \code{simEd} generator
+  state using any of the stream-based \code{simEd} variate generators will not
+  affect the state of the non-stream-based \code{stats} generators, and
+  vice-versa.
+
+  As soon as the \code{simEd} package is attached (i.e., when \code{simEd} is
+  the parent of the global environment), \code{simEd::set.seed} becomes the
+  default for a call to \code{set.seed}.  When the \code{simEd} package is
+  detached, \code{base::set.seed} will revert to the default.
+}
+\value{
+  \code{set.seed} returns \code{NULL}, invisibly, consistent with
+  \code{base::set.seed}.
+}
+\seealso{
+    \code{\link[base]{set.seed}}
+}
+\author{Barry Lawson (\email{blawson@richmond.edu})}
+\examples{
+set.seed(8675309)
+rexp(3, rate = 2)  # explicit call of stats::rexp
+
+set.seed(8675309)
+vexp(3, rate = 2)  # also uses stats::rexp
+
+set.seed(8675309)
+vexp(3, rate = 2, stream = 1) # uses rstream and stats::qexp
+vexp(3, rate = 2, stream = 2)
+rexp(3, rate = 2) # explicit call of stats::rexp, starting with seed 8675309
+
+set.seed(8675309)
+vexp(1, rate = 2, stream = 1) # uses rstream and stats::qexp
+vexp(1, rate = 2, stream = 2)
+vexp(1, rate = 2, stream = 1)
+vexp(1, rate = 2, stream = 2)
+vexp(1, rate = 2, stream = 1)
+vexp(1, rate = 2, stream = 2)
+vexp(3, rate = 2)             # calls stats::rexp, starting with seed 8675309
+}
+\concept{random variate generation}

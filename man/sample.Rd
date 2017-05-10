@@ -1,0 +1,103 @@
+\name{sample}
+\alias{sample}
+
+\title{Random Samples}
+\description{
+   \code{sample} takes a sample of the specified size from the elements of \code{x},
+   either with or without replacement, and with capability to use independent
+   streams and antithetic variates in the draws.
+}
+\usage{
+  sample(x, size, replace = FALSE, prob = NULL, stream = NULL, antithetic = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{x}{either a vector of one or more elements from which to choose, or a
+      positive integer}
+  \item{size}{a non-negative integer giving the number of items to choose}
+  \item{replace}{if \code{FALSE} (default), sampling is without replacement;
+      otherwise, sample is with replacement}
+  \item{prob}{a vector of probability weights for obtaining the elements of the
+      vector being sampled}
+  \item{stream}{if \code{NULL} (default), directly calls \code{base::sample} 
+    and returns its result; otherwise, an integer in 1:100 indicates
+    the \code{rstream} stream used to generate the sample}
+  \item{antithetic}{if \code{FALSE} (default), uses \eqn{u} = uniform(0,1) variate(s)
+    generated via \code{rstream::rstream.sample} to generate the sample;
+    otherwise, uses \eqn{1 - u}. (NB: ignored if \code{stream} is \code{NULL}.)}
+}
+\details{
+   If \code{stream} is \code{NULL}, sampling is done by direct call to
+   \code{\link[=sample.int]{base::sample}} (refer to its documentation for details).
+   In this case, a value of \code{TRUE} for \code{antithetic} is ignored.
+
+   The remainder of details below presume that \code{stream} has a positive
+   integer value, corresponding to use of the \code{\link{vunif}} variate
+   generator for generating the random sample.
+
+   If \code{x} has length 1 and is numeric, sampling takes place from \code{1:x}
+   only if \code{x} is a positive integer; otherwise, sampling takes place using
+   the single value of \code{x} provided (either a floating-point value or a
+   non-positive integer).  Otherwise \code{x} can be a valid R vector, list, or
+   data frame from which to sample.
+
+   The default for \code{size} is the number of items inferred from \code{x},
+   so that \code{sample(x, stream = }\eqn{m}\code{)} generates a
+   random permutation of the elements of \code{x} (or \code{1:x}) using random
+   number stream \eqn{m}.
+
+   It is allowed to ask for \code{size = 0} samples (and only then is a
+   zero-length \code{x} permitted), in which case
+   \code{\link[=sample.int]{base::sample}} is invoked to return the correct
+   (empty) data type.
+
+   The optional \code{prob} argument can be used to give a vector of probabilities
+   for obtaining the elements of the vector being sampled. Unlike
+   \code{\link[=sample.int]{base::sample}}, the weights here must sum to one.
+   If \code{replace} is false, these probabilities are applied successively;
+   that is the probability of choosing the next item is proportional to the
+   weights amongst the remaining items. The number of nonzero probabilities must
+   be at least \code{size} in this case.
+}
+\value{
+  If \code{x} is a single positive integer, \code{sample} returns a vector drawn
+  from the integers \code{1:x}.
+  Otherwise, \code{sample} returns a vector, list, or data frame consistent with
+  \code{typeof(x)}.
+}
+\seealso{
+    \code{\link[=sample.int]{base::sample}}, \code{\link{vunif}}
+}
+\author{Barry Lawson (\email{blawson@richmond.edu}), 
+        Larry Leemis (\email{leemis@math.wm.edu})}
+\examples{
+set.seed(8675309)
+
+# use base::sample (since stream is NULL) to generate a permutation of 1:5
+sample(5)
+
+# use vunif(1, stream = 1) to generate a permutation of 1:5
+sample(5, stream = 1)
+
+# generate a (boring) sample of identical values drawn using the single value 867.5309
+sample(867.5309, size = 10, replace = TRUE, stream = 1)
+
+# use vunif(1, stream = 1) to generate a size-10 sample drawn from 7:9
+sample(7:9, size = 10, replace = TRUE, stream = 1)
+
+# use vunif(1, stream = 1) to generate a size-10 sample drawn from c('x','y','z')
+sample(c('x','y','z'), size = 10, replace = TRUE, stream = 1)
+
+# use vunif(1, stream = 1) to generate a size-5 sample drawn from a list
+mylist <- list()
+mylist$a <- 1:5
+mylist$b <- 2:6
+mylist$c <- 3:7
+sample(mylist, size = 5, replace = TRUE, stream = 1)
+
+# use vunif(1, stream = 1) to generate a size-5 sample drawn from a data frame
+mydf <- data.frame(a = 1:6, b = c(1:3, 1:3))
+sample(mydf, size = 5, replace = TRUE, stream = 1)
+}
+\keyword{IO, distribution}  % RShowDoc("KEYWORDS") for suggested list
+\concept{random sampling}

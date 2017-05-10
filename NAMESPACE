@@ -1,0 +1,15 @@
+export(ibinom, iexp, igamma, igeom, inorm, iunif, iweibull, meanTPS, msq, 
+       quantileTPS, sample, set.seed, sdTPS, ssq, vbinom, vexp, vgamma, vgeom, 
+       vnorm, vunif, vweibull)
+
+import("rstream")
+importFrom("graphics", "axis", "clip", "curve", "hist", "lines", "mtext", "par",
+           "plot", "points", "rect", "segments", "strheight", "text", "title")
+importFrom("grDevices", "col2rgb", "rgb")
+importFrom("methods", "new")
+importFrom("stats", "runif", "IQR", "ecdf", "knots", "plot.ecdf", 
+           "dbinom", "pbinom", "qbinom", "dexp",   "pexp",   "qexp",
+           "dgamma", "pgamma", "qgamma", "dgeom",  "pgeom",  "qgeom",
+           "dnorm",  "pnorm",  "qnorm",  "dunif",  "punif",  "qunif",
+           "dweibull", "pweibull", "qweibull")
+importFrom("utils", "flush.console", "setTxtProgressBar", "txtProgressBar")
