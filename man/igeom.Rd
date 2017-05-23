@@ -59,7 +59,7 @@ Generates random variates from the geometric distribution, and optionally, illus
   All aspects of the random variate generation algorithm are output in red.  All
   aspects of the population distribution are output in black.
 
-  The geometric distribution with parameter \code{prob =} \eqn{p} has density
+  The geometric distribution with parameter \code{prob} = \eqn{p} has density
 
            \deqn{p(x) = p (1-p)^x}
 

@@ -39,10 +39,11 @@
 
   The stream indicated must be an integer between 1 and 25 inclusive.
 
-  The binomial distribution with parameters \code{size =} \eqn{n} and 
-  \code{prob =} \eqn{p} has density
+  The binomial distribution with parameters \code{size} = \eqn{n} and
+  \code{prob} = \eqn{p} has pmf
 
-           \deqn{p(x) = choose(n, x) p^x (1-p)^(n-x)}
+           \deqn{p(x) = {n \choose x} p^x (1-p)^{(n-x)}}{%
+                 p(x) = choose(n, x) p^x (1-p)^(n-x)}
 
   for \eqn{x = 0, \ldots, n}.
 }

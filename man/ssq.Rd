@@ -86,8 +86,8 @@ The function returns a list containing:
 \value{
   A list.
 }
-\author{Larry Leemis (\email{leemis@math.wm.edu}), 
-        Barry Lawson (\email{blawson@richmond.edu})}
+\author{Barry Lawson (\email{blawson@richmond.edu}),
+        Larry Leemis (\email{leemis@math.wm.edu})}
 \examples{
   # process 2000 arrivals, R-provided seed (via NULL seed)
   ssq(2000, NULL)
@@ -112,8 +112,8 @@ The function returns a list containing:
                saveAllStats = TRUE)
   mean(output$interarrivalTimes)
   mean(output$serviceTimes)
-  meanTPS(output$numInQueueT, output$numInQueueN)      # compute time-averaged num in queue
-  meanTPS(output$serverStatusT, output$serverStatusN)  # compute server utilization
+  meanTPS(output$numInQueueT, output$numInQueueN) # compute time-averaged num in queue
+  meanTPS(output$serverStatusT, output$serverStatusN) # compute server utilization
 }
 \keyword{utilities}% at least one, from doc/KEYWORDS
 \concept{queueing}

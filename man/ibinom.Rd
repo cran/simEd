@@ -60,15 +60,16 @@ Generates random variates from the binomial distribution, and optionally, illust
   All aspects of the random variate generation algorithm are output in red.  All
   aspects of the population distribution are output in black.
 
-  The binomial distribution with parameters \code{size =} \eqn{n} and \code{prob
-  =} \eqn{p} has pmf
+  The binomial distribution with parameters \code{size} = \eqn{n} and
+  \code{prob} = \eqn{p} has pmf
 
-           \deqn{p(x)= choose(n, x) p^x (1-p)^(n-x)} 
+           \deqn{p(x) = {n \choose x} p^x (1-p)^{(n-x)}}{%
+                 p(x) = choose(n, x) p^x (1-p)^(n-x)}
      
   for \eqn{x = 0, \ldots, n}.  Note that binomial coefficients can be 
-  computed by \code{choose} in R.
+  computed by \code{\link{choose}} in R.
 
-  The population mean and variance are \eqn{E(X) = n*p} and \eqn{Var(X) = n*p*(1-p)}.
+  The population mean and variance are \eqn{E(X) = np} and \eqn{Var(X) = np(1-p)}.
 
   The algorithm for generating random variates from the binomial distribution is
   synchronized (one random variate for each random number) and monotone in u.

@@ -40,10 +40,11 @@
 
   If \code{scale} is omitted, it assumes the default value of 1.
 
-  The Weibull distribution with parameters \code{shape =} \eqn{a} and 
-  \code{scale =} \eqn{s} has density
+  The Weibull distribution with parameters \code{shape} = \eqn{a} and 
+  \code{scale} = \eqn{b} has density
 
-      \deqn{f(x) = (a/b) (x/b)^(a-1) exp(- (x/b)^a)}
+      \deqn{f(x) = \frac{a}{b} \left(\frac{x}{b}\right)^{a-1} e^{-(x/b)^a}}{%
+            f(x) = (a/b) (x/b)^(a-1) exp(-(x/b)^a)}
 
    for \eqn{x \ge 0}, \eqn{a > 0}, and \eqn{s > 0}.
 }

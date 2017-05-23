@@ -58,10 +58,11 @@ Generates random variates from the Weibull distribution, and optionally, illustr
   All aspects of the random variate generation algorithm are output in red.  All
   aspects of the population distribution are output in black.
 
-  The Weibull distribution with parameters \code{shape =} \eqn{a} and 
-  \code{scale =} \eqn{s} has density
+  The Weibull distribution with parameters \code{shape} = \eqn{a} and 
+  \code{scale} = \eqn{b} has density
 
-      \deqn{f(x) = (a/b) (x/b)^(a-1) exp(- (x/b)^a)}
+      \deqn{f(x) = \frac{a}{b} \left(\frac{x}{b}\right)^{a-1} e^{-(x/b)^a}}{%
+            f(x) = (a/b) (x/b)^(a-1) exp(-(x/b)^a)}
 
    for \eqn{x \ge 0}, \eqn{a > 0}, and \eqn{s > 0}.
 

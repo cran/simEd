@@ -61,7 +61,8 @@ Generates random variates from the normal distribution, and optionally, illustra
 
   The normal distribution has density
 
-           \deqn{f(x) = 1/(\sqrt(2\pi)\sigma) e^{-((x - \mu)^2/(2 \sigma^2))}}
+      \deqn{f(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-(x - \mu)^2/(2 \sigma^2)}}{%
+            f(x) = 1/(\sqrt(2\pi)\sigma) e^(-(x - \mu)^2/(2 \sigma^2))}
 
   where \eqn{\mu} is the mean of the distribution and \eqn{\sigma} the standard
   deviation.

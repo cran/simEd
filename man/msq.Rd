@@ -107,7 +107,8 @@ The function returns a list containing:
 \value{
   A list.
 }
-\author{Barry Lawson (\email{blawson@richmond.edu}), Larry Leemis (\email{leemis@math.wm.edu})}
+\author{Barry Lawson (\email{blawson@richmond.edu}),
+        Larry Leemis (\email{leemis@math.wm.edu})}
 \examples{
   # process 2000 arrivals, R-provided seed (via NULL seed), default 2 servers
   msq(2000, NULL)

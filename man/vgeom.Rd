@@ -38,7 +38,7 @@
 
   The stream indicated must be an integer between 1 and 25 inclusive.
 
-  The geometric distribution with parameter \code{prob =} \eqn{p} has density
+  The geometric distribution with parameter \code{prob} = \eqn{p} has density
 
            \deqn{p(x) = p (1-p)^x}
 

@@ -26,7 +26,7 @@ meanTPS <- function(times = NULL, numbers = NULL)
   #
   timeIntervals <- diff(times)
   if (any(timeIntervals < 0))
-    stop("'times' must be monotonically increasing numeric values")
+    stop("'times' must be non-decreasing numeric values")
   #
   # slick R way to compute areas of rectangles, then sum, then normalize;
   # additional 0 handles equal-length times and numbers
@@ -67,7 +67,7 @@ sdTPS <- function(times = NULL, numbers = NULL)
   #
   timeIntervals <- diff(times)
   if (any(timeIntervals < 0))
-    stop("'times' must be monotonically increasing numeric values")
+    stop("'times' must be non-decreasing numeric values")
   #
   # slick R way to compute areas of rectangles, then sum, then normalize;
   # additional 0 handles equal-length times and numbers
@@ -111,7 +111,7 @@ quantileTPS <- function(times = NULL, numbers = NULL,
   #
   timeIntervals <- diff(times)
   if (any(timeIntervals < 0))
-    stop("'times' must be monotonically increasing numeric values")
+    stop("'times' must be non-decreasing numeric values")
   #
   # slick R way to compute areas of rectangles, then sum, then normalize;
   # additional 0 handles equal-length times and numbers
@@ -120,11 +120,13 @@ quantileTPS <- function(times = NULL, numbers = NULL,
   if (nn == nt) numbers <- numbers[1:(nn - 1)] 
   ordering     <- order(numbers)
   orderedTimes <- cumsum(timeIntervals[ordering]) 
+  lenOT        <- length(orderedTimes)
+  orderedTimes[lenOT] <- times[nt]  # don't rely on cumsum for last entry precision
   quant <- probs * obs.period 
-  i <- rep(1, length(quant))
+  i <- rep(0, length(quant))
   for (j in 1:length(quant)) {
     k <- 1
-    while (orderedTimes[k] < quant[j]) k <- k + 1
+    while (k <= lenOT && orderedTimes[k] < quant[j]) k <- k + 1
     i[j] <- k
   }
   quantiles <- numbers[ordering][i]

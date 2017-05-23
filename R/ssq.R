@@ -113,7 +113,8 @@ ssq <- function( maxArrivals           = Inf,
   serverCal   <- list(type = 's', time = 0,   state = 0)
 
   # progress bar to keep the user updated
-  if (showProgress) bar <- txtProgressBar(min = 0, max = 1, initial = 0, style = 3)
+  if (interactive() && showProgress)
+    bar <- txtProgressBar(min = 0, max = 1, initial = 0, style = 3)
 
   ## ---------------------------------------------------------------------
   ## return a copy of the next event type
@@ -361,12 +362,13 @@ ssq <- function( maxArrivals           = Inf,
         }
       }
 
-      if (showProgress) updateProgressBar(t.current, numArrivals, numDepartures)
+      if (interactive() && showProgress)
+        updateProgressBar(t.current, numArrivals, numDepartures)
 
     } # while (...)
 
     # ensure bar runs through end (e.g., if maxTime too big for maxArrivals)
-    if (showProgress) {
+    if (interactive() && showProgress) {
        setTxtProgressBar(bar, 1)
        close(bar)
     }

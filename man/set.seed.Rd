@@ -28,7 +28,7 @@
   Any call to \code{set.seed} re-initializes the seed for the \code{stats} and
   \code{simEd} generators as if no seed had been set.
   If called with \code{seed = NULL}, both the \code{stats} and \code{simEd} variate
-  generators are re-initialized using a random seed.
+  generators are re-initialized using a random seed based on the system clock.
 
   If the user wishes to set the seed for the \code{stats} generators without
   affecting the seeds of the \code{simEd} generators, an explicit call to
@@ -49,9 +49,10 @@
   \code{base::set.seed}.
 }
 \seealso{
-    \code{\link[base]{set.seed}}
+    \code{\link[base:set.seed]{base::set.seed}}
 }
-\author{Barry Lawson (\email{blawson@richmond.edu})}
+\author{Barry Lawson (\email{blawson@richmond.edu}),
+        Larry Leemis (\email{leemis@math.wm.edu})}
 \examples{
 set.seed(8675309)
 rexp(3, rate = 2)  # explicit call of stats::rexp
