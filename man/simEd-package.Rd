@@ -40,8 +40,8 @@
    }
 
    The package contains functions that are event-driven simulation
-   implementations of a single-server queueing system and of a multiple-server
-   queuing system:
+   implementations of a single-server single-queue system and of a
+   multiple-server single-queue system:
    \itemize{
       \item single-server: \code{\link{ssq}}
       \item multiple-server: \code{\link{msq}}

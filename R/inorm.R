@@ -509,7 +509,7 @@ inorm <- function(u = runif(1), mean = 0, sd = 1,
       ecdfKnots <- knots(ecdfFcn)
       plot.ecdf(ecdfFcn, verticals = TRUE, pch = "", add = TRUE,
           lwd = lwd, col = color, col.01line = NA)
-      segments(0, 0, ecdfKnots[1], 0, lwd = lwd, col = color, lend = 1)
+      segments(fromX, 0, ecdfKnots[1], 0, lwd = lwd, col = color, lend = 1)
       segments(ecdfKnots[length(ecdfKnots)], 1, toX, 1, 
           lwd = lwd, col = color, lend = 1)
     }

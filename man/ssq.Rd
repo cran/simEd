@@ -96,6 +96,7 @@ The function returns a list containing:
   ssq(maxDepartures = 2000, seed = 54321)
   ssq(maxTime = 1000, seed = 54321)
 
+  ############################################################################
   # example to show use of seed = NA (default) to rely on current state of generator
   output1 <- ssq(2000, 8675309, showOutput = FALSE, saveAllStats = TRUE)
   output2 <- ssq(3000,          showOutput = FALSE, saveAllStats = TRUE)
@@ -114,6 +115,71 @@ The function returns a list containing:
   mean(output$serviceTimes)
   meanTPS(output$numInQueueT, output$numInQueueN) # compute time-averaged num in queue
   meanTPS(output$serverStatusT, output$serverStatusN) # compute server utilization
+
+  ############################################################################
+  # example to show use of (simple) trace data for arrivals and service times;
+  # ssq() will need one more interarrival (arrival) time than jobs processed
+  arrivalTimes <- c(15, 47, 71, 111, 123, 152, 166, 226, 310, 320, 99999)
+  serviceTimes <- c(43, 36, 34,  30,  38,  40,  31,  29,  36,  30) 
+
+  interarrivalTimes <- c(arrivalTimes[1], diff(arrivalTimes))
+
+  getInterarr <- function()
+  {
+      nextInterarr <- interarrivalTimes[1]
+      interarrivalTimes <<- interarrivalTimes[-1] # remove 1st element globally
+      return(nextInterarr)
+  }
+
+  getService <- function()
+  {
+      nextService <- serviceTimes[1]
+      serviceTimes <<- serviceTimes[-1]  # remove 1st element globally
+      return(nextService)
+  }
+
+  numJobs <- length(serviceTimes)
+  output <- ssq(maxArrivals = numJobs, interarrivalFcn = getInterarr, 
+                serviceFcn = getService, saveAllStats = TRUE)
+  mean(output$interarrivalTimes)
+  mean(output$serviceTimes)
+
+
+  ############################################################################
+  # example to show use of (simple) trace data for arrivals and service times,
+  # allowing for reuse (recycling) of trace data times
+  smallQueueTrace <- list()
+  smallQueueTrace$arrivalTimes <- c(15, 47, 71, 111, 123, 152, 166, 226, 310, 320)
+  smallQueueTrace$serviceTimes <- c(43, 36, 34,  30,  38,  40,  31,  29,  36,  30) 
+
+  interarrivalTimes <- NULL
+  serviceTimes      <- NULL
+
+  getInterarr <- function()
+  {
+      if (length(interarrivalTimes) == 0) { 
+            interarrivalTimes <<- c(smallQueueTrace$arrivalTimes[1], 
+                                    diff(smallQueueTrace$arrivalTimes))
+      }   
+      nextInterarr <- interarrivalTimes[1]
+      interarrivalTimes <<- interarrivalTimes[-1] # remove 1st element globally
+      return(nextInterarr)
+  }
+
+  getService <- function()
+  {
+      if (length(serviceTimes) == 0) { 
+          serviceTimes <<- smallQueueTrace$serviceTimes
+      }   
+      nextService <- serviceTimes[1]
+      serviceTimes <<- serviceTimes[-1]  # remove 1st element globally
+      return(nextService)
+  }
+
+  output <- ssq(maxArrivals = 100, interarrivalFcn = getInterarr, 
+                serviceFcn = getService, saveAllStats = TRUE)
+  mean(output$interarrivalTimes)
+  mean(output$serviceTimes)
 }
 \keyword{utilities}% at least one, from doc/KEYWORDS
 \concept{queueing}

@@ -1,5 +1,5 @@
 Package: simEd
-Version: 1.0.1
+Version: 1.0.2
 Title: Simulation Education
 Author: Barry Lawson, Larry Leemis
 Maintainer: Barry Lawson <blawson@richmond.edu>
@@ -15,6 +15,6 @@ Description: Contains various functions to be used for simulation education,
 License: GPL (>= 2)
 LazyData: true
 NeedsCompilation: no
-Packaged: 2017-05-23 21:15:28 UTC; blawson
+Packaged: 2017-07-04 15:57:37 UTC; blawson
 Repository: CRAN
-Date/Publication: 2017-05-23 22:29:56 UTC
+Date/Publication: 2017-07-04 19:50:47 UTC

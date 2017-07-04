@@ -9,7 +9,7 @@ Contains various functions to be used for simulation education, including queuei
 Example
 -------
 
-This is an example showing you how to use the `ssq` function in our package to simulate a simple M/M/1 queue, passing in your own exponential interarrival function defined using our `vexp` variate generator, and then plot the number in the system across time with superimposed time-averaged statistics:
+This is an example showing how to use the `ssq` function in our package to simulate a simple M/M/1 queue, passing in your own exponential interarrival function defined using our `vexp` variate generator, and then plot the number in the system across time with superimposed time-averaged statistics:
 
 ``` r
 ## ssq example code
@@ -49,7 +49,7 @@ The package contains functions to visualize variate generation for the same two 
 -   discrete: `ibinom`, `igeom`
 -   continuous: `iexp`, `igamma`, `inorm`, `iunif`, `iweibull`
 
-The package contains functions that are event-driven simulation implementations of a single-server queueing system and of a multiple-server queuing system:
+The package contains functions that are event-driven simulation implementations of a single-server single-queue system and of a multiple-server single-queue system:
 
 -   single-server: `ssq`
 -   multiple-server: `msq`
