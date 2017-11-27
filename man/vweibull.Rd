@@ -46,7 +46,7 @@
       \deqn{f(x) = \frac{a}{b} \left(\frac{x}{b}\right)^{a-1} e^{-(x/b)^a}}{%
             f(x) = (a/b) (x/b)^(a-1) exp(-(x/b)^a)}
 
-   for \eqn{x \ge 0}, \eqn{a > 0}, and \eqn{s > 0}.
+   for \eqn{x \ge 0}, \eqn{a > 0}, and \eqn{b > 0}.
 }
 \value{
   A vector of Weibull random variates.

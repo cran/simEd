@@ -43,7 +43,7 @@
   The exponential distribution with rate \eqn{\lambda} has density
 
            \deqn{f(x) = \lambda e^{-\lambda x}}{%
-                 f(x) = \lambda e^(\lambda x)}
+                 f(x) = \lambda e^(-\lambda x)}
            
            
   for \eqn{x \ge 0}.

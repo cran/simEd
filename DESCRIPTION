@@ -1,20 +1,21 @@
 Package: simEd
-Version: 1.0.2
+Version: 1.0.3
 Title: Simulation Education
 Author: Barry Lawson, Larry Leemis
 Maintainer: Barry Lawson <blawson@richmond.edu>
 Imports: graphics, grDevices, methods, stats, utils
 Depends: rstream
 Description: Contains various functions to be used for simulation education, 
-    including queueing simulation functions, variate generation functions
-    capable of producing independent streams and antithetic variates, functions
-    for illustrating random variate generation for various discrete and
-    continuous distributions, and functions to compute time-persistent
-    statistics.  Also contains two queueing data sets (one fabricated, one
-    real-world) to facilitate input modeling.
+    including simple Monte Carlo simulation functions, queueing simulation
+    functions, variate generation functions capable of producing independent
+    streams and antithetic variates, functions for illustrating random variate
+    generation for various discrete and continuous distributions, and functions
+    to compute time-persistent statistics.  Also contains two queueing data sets
+    (one fabricated, one real-world) to facilitate input modeling.
 License: GPL (>= 2)
 LazyData: true
+RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-07-04 15:57:37 UTC; blawson
+Packaged: 2017-11-26 23:51:17 UTC; blawson
 Repository: CRAN
-Date/Publication: 2017-07-04 19:50:47 UTC
+Date/Publication: 2017-11-27 04:05:15 UTC

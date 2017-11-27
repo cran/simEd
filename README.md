@@ -2,14 +2,14 @@
 simEd (Simulation Education)
 ============================
 
-Contains various functions to be used for simulation education, including queueing simulation functions, variate generation functions capable of producing independent streams and antithetic variates, functions for illustrating random variate generation for various discrete and continuous distributions, and functions to compute time-persistent statistics. Also contains two queueing data sets (one fabricated, one real-world) to facilitate input modeling.
+This package contains various functions to be used for simulation education, including simple Monte Carlo simulation functions, queueing simulation functions, variate generation functions capable of producing independent streams and antithetic variates, functions for illustrating random variate generation for various discrete and continuous distributions, and functions to compute time-persistent statistics. The package also contains two queueing data sets (one fabricated, one real-world) to facilitate input modeling.
 
 **Request From Authors**: If you adopt and use this package for your simulation course, we would greatly appreciate were you to email us (`blawson<at>richmond<dot>edu` or `leemis<at>math<dot>wm<dot>edu`) to let us know, as we would like to maintain a list of adopters. Please include your name, university/affiliation, and course name/number. Thanks!
 
 Example
 -------
 
-This is an example showing how to use the `ssq` function in our package to simulate a simple M/M/1 queue, passing in your own exponential interarrival function defined using our `vexp` variate generator, and then plot the number in the system across time with superimposed time-averaged statistics:
+This is an example showing use of the `ssq` function in our package to simulate a simple M/M/1 queue, passing in a custom exponential interarrival function defined using our `vexp` variate generator, and then plotting the number in the system across time, with superimposed time-averaged statistics computed using `meanTPS` and `sdTPS`:
 
 ``` r
 ## ssq example code
@@ -30,7 +30,7 @@ Installing
 
 Install the current version of `simEd` from CRAN using `install.packages("simEd")`.
 
-Note that the `simEd` package depends on Josef Leydold's `rstream` package, a wrapper of Pierre L'Ecuyer's "mrg32k3a" random number generator, to provide independent streams of Uniform(0,1) random numbers. If the `rstream` package is not already installed, the previous step will install `rstream` automatically.
+Note that the `simEd` package depends on Josef Leydold's `rstream` package, a wrapper of Pierre L'Ecuyer's "mrg32k3a" random number generator, to provide independent streams of uniform(0,1) random numbers. If the `rstream` package is not already installed, the previous step will install `rstream` automatically.
 
 Details
 -------
@@ -49,12 +49,17 @@ The package contains functions to visualize variate generation for the same two 
 -   discrete: `ibinom`, `igeom`
 -   continuous: `iexp`, `igamma`, `inorm`, `iunif`, `iweibull`
 
-The package contains functions that are event-driven simulation implementations of a single-server single-queue system and of a multiple-server single-queue system:
+The package contains functions that implement Monte Carlo simulation approaches for estimating probabilities in two different dice games:
+
+-   Galileo's dice problem: `galileo`
+-   craps: `craps`
+
+The package also contains functions that are event-driven simulation implementations of a single-server single-queue system and of a multiple-server single-queue system:
 
 -   single-server: `ssq`
 -   multiple-server: `msq`
 
-Both functions are extensible in allowing the user to provide custom arrival and service process functions.
+Both queueing functions are extensible in allowing the user to provide custom arrival and service process functions.
 
 The package contains three functions for computing time-persistent statistics:
 
@@ -62,12 +67,12 @@ The package contains three functions for computing time-persistent statistics:
 -   time-average standard deviation: `sdTPS`
 -   time-average quantiles: `quantileTPS`
 
-The package also masks two functions from the stats package:
+The package also masks two functions from the `stats` package:
 
--   `set.seed`, which explicitly calls the stats version in addition to setting up seeds for the independent streams in the package;
+-   `set.seed`, which explicitly calls the `stats` version in addition to setting up seeds for the independent streams in the package;
 -   `sample`, which provides capability to use independent streams and antithetic variates.
 
 Finally, the package provides two queueing data sets to facilitate input modeling:
 
--   `queueTrace`, which contains 1000 (fabricated) arrival and service times for a single-server queueing system;
+-   `queueTrace`, which contains 1000 arrival times and 1000 service times (all fabricated) for a single-server queueing system;
 -   `tylersGrill`, which contains 1434 arrival times and 110 (sampled) service times corresponding to actual data collected during one business day at Tyler's Grill at the University of Richmond.

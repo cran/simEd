@@ -11,16 +11,17 @@
 }
 \usage{
   iexp(u = runif(1), rate = 1, 
-         minPlotQuantile  = 0,
-         maxPlotQuantile  = 0.95,
-         plot             = TRUE,
-         showCDF          = TRUE,
-         showPDF          = FALSE,
-         showECDF         = FALSE,
-         show             = NULL,
-         plotDelay        = 0,
-         maxPlotTime      = 30,
-         resetRowsMargins = TRUE)
+         minPlotQuantile = 0,
+         maxPlotQuantile = 0.95,
+         plot            = TRUE,
+         showCDF         = TRUE,
+         showPDF         = FALSE,
+         showECDF        = FALSE,
+         show            = NULL,
+         plotDelay       = 0,
+         maxPlotTime     = 30,
+         showTitle       = TRUE,
+         respectLayout   = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +36,8 @@
   \item{show}{shortcut way of denoting plots to display; either a binary vector of length three or an integer in [0,7] (see "Details" below)}
   \item{plotDelay}{delay, in seconds, between generation of the random variates}
   \item{maxPlotTime}{maximum time, in seconds, to plot all of the random variates}
-  \item{resetRowsMargins}{logical; if \code{TRUE} (default), resets the plot device to default rows and margins on exit}
+  \item{showTitle}{logical; if \code{TRUE} (default), displays a title in the first of any displayed plots}
+  \item{respectLayout}{logical; if \code{TRUE} (default), respects existing settings for device layout (see "Details" below)}
 }
 \details{
 Generates random variates from the exponential distribution, and optionally, illustrates
@@ -45,13 +47,13 @@ Generates random variates from the exponential distribution, and optionally, ill
   }
   When all of the graphics are requested,
   \itemize{
-    \item the top graph illustrates the use of the inverse-cdf technique by
+    \item the first graph illustrates the use of the inverse-cdf technique by
         graphing the population cdf and the transformation of the random numbers
         to random variates, 
-    \item the middle graph illustrates the effect of random sampling variability
+    \item the second graph illustrates the effect of random sampling variability
         by graphing the population pdf and the histogram associated with the
         random variates, and
-    \item the bottom graph illustrates effect of random sampling variability by
+    \item the third graph illustrates effect of random sampling variability by
         graphing the population cdf and the empirical cdf associated with the
         random variates.
   }
@@ -61,7 +63,7 @@ Generates random variates from the exponential distribution, and optionally, ill
   The exponential distribution with rate \eqn{\lambda} has density
 
            \deqn{f(x) = \lambda e^{-\lambda x}}{%
-                 f(x) = \lambda e^(\lambda x)}
+                 f(x) = \lambda e^(-\lambda x)}
            
   for \eqn{x \ge 0}.
 
@@ -99,6 +101,20 @@ Generates random variates from the exponential distribution, and optionally, ill
   Any valid value for \code{show} takes precedence over existing individual
   values for \code{showCDF}, \code{showPDF}, and \code{showECDF}.
 
+  If \code{respectLayout} is \code{TRUE}, the function respects existing
+  settings for device layout.  Note, however, that if the number of plots
+  requested (either via \code{show} or via \code{showCDF}, \code{showPMF}, and
+  \code{showECDF}) exceeds the number of plots available in the current layout
+  (as determined by \code{prod(par("mfrow"))}), the function will display all
+  requested plots but will also display a warning message indicating that the
+  current layout does not permit simultaneous viewing of all requested plots.
+
+  If \code{respectLayout} is \code{FALSE}, any existing user settings for device
+  layout are ignored.  That is, the function uses \code{par} to explicitly set
+  \code{mfrow} sufficient to show all requested plots stacked vertically to
+  align their horizontal axes, and then resets row, column, and margin settings
+  to R default values on exit.
+
   The \code{minPlotQuantile} and \code{maxPlotQuantile} arguments are present in
   order to compress the plots horizontally.   The random variates generated are
   not impacted by these two arguments.  Vertical, dotted, black lines are
@@ -119,43 +135,75 @@ Generates random variates from the exponential distribution, and optionally, ill
 \examples{
 iexp(0.7, rate = 2)
 
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and PDF plots
 set.seed(8675309)
 iexp(runif(10), rate = 2, showPDF = TRUE)
 
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and ECDF plots
 set.seed(8675309)
 iexp(runif(10), rate = 2, showECDF = TRUE)
 
+par(mfrow = c(3,1)) # 3 rows, 1 col for CDF, PDF, and ECDF plots
 set.seed(8675309)
 iexp(runif(10), rate = 2, showPDF = TRUE, showECDF = TRUE)
 
+par(mfrow = c(1,1)) # 1 row, 1 col for PDF only plot
 set.seed(8675309)
 iexp(runif(10), rate = 2, showPDF = TRUE, showCDF = FALSE)
 
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and PDF plots
 iexp(runif(120), rate = 2, showPDF = TRUE, minPlotQuantile = 0.02, maxPlotQuantile = 0.98)
 
-# use resetRowsMargins to allow visual exploration of ks.test results
+# overlay visual exploration of ks.test results
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and ECDF plots
 set.seed(54321)
-vals <- iexp(runif(10), rate = 2, showECDF = TRUE, resetRowsMargins = FALSE)
+vals <- iexp(runif(10), rate = 2, showECDF = TRUE)
 D <- as.numeric(ks.test(vals, "pexp", 2)$statistic)
 for (x in seq(0.05, 0.75, by = 0.05)) {
    y <- pexp(x, rate = 2)
    segments(x, y, x, y + D, col = "darkgreen", lwd = 2, xpd = NA)
 }
 
-# show the PDF and CDF without any variates
+# plot the PDF and CDF without any variates
+par(mfrow = c(2,1)) # 2 rows, 1 col for PDF and CDF plots
 iexp(NULL, rate = 2)
 
-# show CDF with inversion and PDF using show
+# plot CDF with inversion and PDF using show
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and PDF plots
 iexp(runif(10), rate = 2, show = c(1,1,0))
 iexp(runif(10), rate = 2, show = 6)
 
-# show CDF with inversion and ECDF using show
+# plot CDF with inversion and ECDF using show
+par(mfrow = c(2,1)) # 2 rows, 1 col for CDF and ECDF plots
 iexp(runif(10), rate = 2, show = c(1,0,1))
 iexp(runif(10), rate = 2, show = 5)
 
-# show CDF with inversion, PDF, and ECDF using show
+# plot CDF with inversion, PDF, and ECDF using show
+par(mfrow = c(3,1)) # 3 rows, 1 col for CDF, PDF, and ECDF plots
 iexp(runif(10), rate = 2, show = c(1,1,1))
 iexp(runif(10), rate = 2, show = 7)
+
+# plot three different CDF+PDF+ECDF vertical displays
+par(mfcol = c(3,3))  # 3 rows, 3 cols, filling columns before rows
+set.seed(8675309)
+iexp(runif(20), rate = 2, show = 7)
+iexp(runif(20), rate = 2, show = 7)
+iexp(runif(20), rate = 2, show = 7)
+
+# plot three different CDF+PDF+ECDF horizontal displays, with title only
+# on the first display
+par(mfrow = c(3,3))  # 3 rows, 3 cols, filling rows before columns
+set.seed(8675309)
+iexp(runif(20), rate = 2, show = 7)
+iexp(runif(20), rate = 2, show = 7, showTitle = FALSE)
+iexp(runif(20), rate = 2, show = 7, showTitle = FALSE)
+
+# exhibit use of the respectLayout = FALSE option
+par(mfrow = c(3,3))  # this will be ignored below since respectLayout = FALSE
+set.seed(8675309)
+iexp(runif(20), rate = 2, show = 7, respectLayout = FALSE)
+par("mfrow")  # will have been reset c(1,1)
+par("mar")    # will have been reset to c(5.1, 4.1, 4.1, 2.1)
 
 }
 \keyword{hplot,dynamic,distribution}  % RShowDoc("KEYWORDS") for suggested list

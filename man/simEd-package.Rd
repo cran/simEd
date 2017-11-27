@@ -38,16 +38,23 @@
       \item continuous: \code{\link{iexp}}, \code{\link{igamma}},
          \code{\link{inorm}}, \code{\link{iunif}}, \code{\link{iweibull}}
    }
+   
+   The package contains functions that implement Monte Carlo simulation
+   approaches for estimating probabilities in two different dice games:
+   \itemize{
+      \item Galileo's dice problem: \code{\link{galileo}}
+      \item craps: \code{\link{craps}}
+   }
 
-   The package contains functions that are event-driven simulation
+   The package also contains functions that are event-driven simulation
    implementations of a single-server single-queue system and of a
    multiple-server single-queue system:
    \itemize{
       \item single-server: \code{\link{ssq}}
       \item multiple-server: \code{\link{msq}}
    }
-   Both functions are extensible in allowing the user to provide custom arrival
-   and service process functions.
+   Both queueing functions are extensible in allowing the user to provide custom
+   arrival and service process functions.
 
    The package contains three functions for computing time-persistent statistics:
    \itemize{
@@ -68,8 +75,9 @@
    Finally, the package provides two queueing data sets to facilitate input
    modeling:
    \itemize{
-      \item \code{\link{queueTrace}}, which contains 1000 (fabricated) arrival and
-          service times for a single-server queueing system;
+      \item \code{\link{queueTrace}}, which contains 1000 arrival times and
+          1000 service times (all fabricated) for a single-server queueing
+          system;
       \item \code{\link{tylersGrill}}, which contains 1434 arrival times and
           110 (sampled) service times corresponding to actual data collected
           during one business day at Tyler's Grill at the University of Richmond.

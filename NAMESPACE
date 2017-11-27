@@ -1,6 +1,6 @@
-export(ibinom, iexp, igamma, igeom, inorm, iunif, iweibull, meanTPS, msq, 
-       quantileTPS, sample, set.seed, sdTPS, ssq, vbinom, vexp, vgamma, vgeom, 
-       vnorm, vunif, vweibull)
+export(craps, galileo, ibinom, iexp, igamma, igeom, inorm, iunif, iweibull, 
+       meanTPS, msq, quantileTPS, sample, set.seed, sdTPS, ssq, vbinom, vexp,
+       vgamma, vgeom, vnorm, vunif, vweibull)
 
 import("rstream")
 importFrom("graphics", "axis", "clip", "curve", "hist", "lines", "mtext", "par",

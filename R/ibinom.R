@@ -7,16 +7,17 @@
 # variates generated, with theoretical binomial superimposed as spike/dots.
 ###############################################################################
 ibinom <- function(u = runif(1), size, prob,
-                   minPlotQuantile  = 0,
-                   maxPlotQuantile  = 1,
-                   plot             = TRUE, 
-                   showCDF          = TRUE,
-                   showPMF          = FALSE,
-                   showECDF         = FALSE,
-                   show             = NULL,
-                   plotDelay        = 0,
-                   maxPlotTime      = 30,
-                   resetRowsMargins = TRUE)
+                   minPlotQuantile = 0,
+                   maxPlotQuantile = 1,
+                   plot            = TRUE, 
+                   showCDF         = TRUE,
+                   showPMF         = FALSE,
+                   showECDF        = FALSE,
+                   show            = NULL,
+                   plotDelay       = 0,
+                   maxPlotTime     = 30,
+                   showTitle       = TRUE,
+                   respectLayout   = TRUE)
 {
   #############################################################################
 
@@ -61,8 +62,10 @@ ibinom <- function(u = runif(1), size, prob,
       stop("when 'show' is not a binary vector, it must be an integer in [0,7]")
   }
 
-  if (!is.logical(resetRowsMargins) || length(resetRowsMargins) != 1)
-    stop("'resetRowsMargins' must be a single logical value")
+  if (!is.logical(showTitle) || length(showTitle) != 1)
+    stop("'showTitle' must be a single logical value")
+  if (!is.logical(respectLayout) || length(respectLayout) != 1)
+    stop("'respectLayout' must be a single logical value")
 
   if (!is.numeric(plotDelay) || length(plotDelay) != 1 || plotDelay < 0)
     stop("'plotDelay' must be a numeric value (in secs) >= 0")
@@ -163,11 +166,28 @@ ibinom <- function(u = runif(1), size, prob,
   }
 
   # use sum to determine how many plot "shows" are TRUE ==> set # rows
-  rows <- sum(showCDF, showPMF, showECDF)
-  par(mfrow = c(rows, 1))
+  minPlots  <- sum(showCDF, showPMF, showECDF)
+
+  if (respectLayout) {
+    # try to respect user's previously defined par(mfrow) or par(mfcol) if 
+    # sufficient to show all plots; if not, display a warning message
+    userPlots <- prod(par("mfrow"))
+    if (userPlots < minPlots) {
+      msg <- paste('Cannot display the requested ', minPlots, 
+              ' plots simultaneously because layout is set for ', userPlots, 
+              ' plot', if (userPlots > 1) 's. ' else '. ',
+              'Please use \'par\' to set layout appropriately, e.g., ',
+              'par(mfrow = c(', minPlots, ',1)) or ', 
+              'par(mfcol = c(1,', minPlots, ')).', sep = "")
+      warning(msg)
+    }
+  } else {
+    # force the layout sufficient to show only these plots
+    par(mfrow = c(minPlots, 1))  # minPlots rows, 1 column
+  }
 
   # set default margins for plots
-  botMar <- if (rows > 1) 4.1 else 5.1
+  botMar <- if (minPlots > 1) 4.1 else 5.1
   par(mar = c(botMar, 4.1, 2.1, 1.5))   # 0.5 for right??
 
   # set color for plotting variates
@@ -273,7 +293,7 @@ ibinom <- function(u = runif(1), size, prob,
     mtext("x", side = 1, line = 3, cex = plot_cex)
 
     # draw the title
-    title(titleStr, cex.main = 0.975)
+    if (showTitle) title(titleStr, cex.main = 0.975)
 
     # try to find appropriate x-value to draw u's and u-points...
     # by trial and error, decreasing by -0.02*plot_range seems to work...
@@ -387,7 +407,7 @@ ibinom <- function(u = runif(1), size, prob,
           xaxt = "n", yaxt = "n", xlab = "", ylab = "", bty = "n", las = 1)
 
     # draw the title, only if not already drawn by showCDF above;
-    if (showCDF == FALSE) title(titleStr, cex.main = 0.975)
+    if (showTitle && showCDF == FALSE) title(titleStr, cex.main = 0.975)
 
     # plot the theoretical -- start w/ black spikes behind, adding points below
     points(fromX:toX, exactPMF, pch = "", type = "h")
@@ -555,14 +575,16 @@ ibinom <- function(u = runif(1), size, prob,
     if (toX < size) segments(xAxisMax, 0, xAxisMax, 1, lty = "dotted", xpd = NA)
 
     # draw the title
-    if (showCDF == FALSE && showPMF == FALSE) title(titleStr, cex.main = 0.975)
+    if (showTitle && showCDF == FALSE && showPMF == FALSE) {
+      title(titleStr, cex.main = 0.975)
+    }
 
-  }
+  } # if (showECDF == TRUE)
 
   #############################################################################
 
   # reset display, margins, and warnings
-  if (resetRowsMargins) {
+  if (!respectLayout) {
     par(mfrow = c(1, 1))
     par(mar = c(5.1, 4.1, 4.1, 2.1))
   }

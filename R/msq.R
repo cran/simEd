@@ -111,6 +111,8 @@ msq <- function( maxArrivals           = Inf,
     stop("'saveServerStatus' must be logical type")
   if (!is.logical(showOutput))
     stop("'showOutput' must be logical type")
+  if (!is.logical(showProgress))
+    stop("'showProgress' must be logical type")
 
   if (saveAllStats)
   {
@@ -145,7 +147,7 @@ msq <- function( maxArrivals           = Inf,
 
   # progress bar to keep the user updated
   if (interactive() && showProgress) 
-    bar <- txtProgressBar(min = 0, max = 1, initial = 0, style = 3)
+    bar <- utils::txtProgressBar(min = 0, max = 1, initial = 0, style = 3)
 
   ## ---------------------------------------------------------------------
   ## return a copy of the next event type
@@ -298,12 +300,12 @@ msq <- function( maxArrivals           = Inf,
   updateProgressBar <- function(t, numArrivals, numDepartures)
   {
      if (maxTime < Inf) 
-        setTxtProgressBar(bar, t / maxTime)
+        utils::setTxtProgressBar(bar, t / maxTime)
      else if (maxArrivals < maxDepartures)
-        setTxtProgressBar(bar, numArrivals / maxArrivals)
+        utils::setTxtProgressBar(bar, numArrivals / maxArrivals)
      else
-        setTxtProgressBar(bar, numDepartures / maxDepartures)
-     flush.console()
+        utils::setTxtProgressBar(bar, numDepartures / maxDepartures)
+     utils::flush.console()
   }
 
   ## -----------------------------------------------------------------------
@@ -543,7 +545,7 @@ msq <- function( maxArrivals           = Inf,
 
     # ensure bar runs through end (e.g., if maxTime too big for maxArrivals)
     if (interactive() && showProgress) {
-       setTxtProgressBar(bar, 1)
+       utils::setTxtProgressBar(bar, 1)
        close(bar)
     }
 

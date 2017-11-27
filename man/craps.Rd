@@ -1,0 +1,57 @@
+\name{craps}
+\alias{craps}
+
+\title{Monte Carlo Simulation of the Dice Game "Craps"}
+\description{
+A Monte Carlo simulation of the dice game "craps".
+Returns a point estimate of the probability of winning craps using fair dice.
+}
+\usage{
+craps(nrep = 1000, seed = NA, showProgress = TRUE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{nrep}{number of replications (plays of a single game of craps)}
+  \item{seed}{initial seed to the random number generator (NA uses current state of random number generator; NULL seeds using system clock)}
+  \item{showProgress}{if TRUE, displays a progress bar on screen during execution}
+}
+\details{
+Implements a Monte Carlo simulation of the dice game craps played with fair
+dice.
+A single play of the game proceeds as follows:
+  \itemize{
+    \item Two fair dice are rolled.  If the sum is 7 or 11, the player wins
+    immediately; if the sum is 2, 3, or 12, the player loses immediately.
+    Otherwise the sum becomes the \emph{point}.
+    \item The two dice continue to be rolled until either a sum of 7 is rolled
+    (in which case the player loses) or a sum equal to the \emph{point} is
+    rolled (in which case the player wins).
+  }
+The simulation involves \code{nrep} replications of the game. 
+
+Note: When the value of \code{nrep} is large, the function will execute
+noticeably faster when \code{showProgress} is set to \code{FALSE}.
+}
+\value{
+  Point estimate of the probability of winning at craps (a real-valued scalar).
+}
+\author{Barry Lawson (\email{blawson@richmond.edu}),
+        Larry Leemis (\email{leemis@math.wm.edu})}
+\examples{
+  # set the initial seed externally using set.seed;
+  # then use that current state of the generator with default nrep = 1000
+  set.seed(8675309)
+  craps()  # uses state of generator set above
+
+  # explicitly set the seed in the call to the function,
+  # using default nrep = 1000
+  craps(seed = 8675309)
+
+  # use the current state of the random number generator with nrep = 10000
+  prob <- craps(10000)
+
+  # explicitly set nrep = 10000 and seed = 8675309
+  probs <- craps(10000, 8675309)
+}
+\keyword{misc}% at least one, from doc/KEYWORDS
+\concept{Monte Carlo simulation}

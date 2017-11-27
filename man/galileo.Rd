@@ -1,0 +1,52 @@
+\name{galileo}
+\alias{galileo}
+
+\title{Monte Carlo Simulation of Galileo's Dice}
+\description{
+A Monte Carlo simulation of the Galileo's Dice problem.
+Returns a vector containing point estimates of the probabilities of the sum of
+three fair dice for sums 3, 4, \eqn{\ldots}, 18.
+}
+\usage{
+galileo(nrep = 1000, seed = NA, showProgress = TRUE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{nrep}{number of replications (rolls of the three dice)}
+  \item{seed}{initial seed to the random number generator (NA uses current state of random number generator; NULL seeds using system clock)}
+  \item{showProgress}{if TRUE, displays a progress bar on screen during execution}
+}
+\details{
+Implements a Monte Carlo simulation of the Galileo's Dice problem.
+The simulation involves \code{nrep} replications of rolling three dice and
+summing the up-faces, and computing point estimates of the probabilities
+of each possible sum 3, 4, \eqn{\ldots}, 18.
+
+Note: When the value of \code{nrep} is large, the function will execute
+noticeably faster when \code{showProgress} is set to \code{FALSE}.
+}
+\value{
+  An 18-element vector of point estimates of the probabilities.
+  (Because a sum of 1 or 2 is not possible, the corresponding entries in the
+  returned vector have value \code{NA}.)
+}
+\author{Barry Lawson (\email{blawson@richmond.edu}),
+        Larry Leemis (\email{leemis@math.wm.edu})}
+\examples{
+  # set the initial seed externally using set.seed;
+  # then use that current state of the generator with default nrep = 1000
+  set.seed(8675309)
+  galileo()  # uses state of generator set above
+
+  # explicitly set the seed in the call to the function,
+  # using default nrep = 1000
+  galileo(seed = 8675309)
+
+  # use the current state of the random number generator with nrep = 10000
+  probs <- galileo(10000)
+
+  # explicitly set nrep = 10000 and seed = 8675309
+  probs <- galileo(10000, 8675309)
+}
+\keyword{misc}% at least one, from doc/KEYWORDS
+\concept{Monte Carlo simulation}

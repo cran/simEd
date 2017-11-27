@@ -119,10 +119,13 @@ The function returns a list containing:
   ############################################################################
   # example to show use of (simple) trace data for arrivals and service times;
   # ssq() will need one more interarrival (arrival) time than jobs processed
-  arrivalTimes <- c(15, 47, 71, 111, 123, 152, 166, 226, 310, 320, 99999)
-  serviceTimes <- c(43, 36, 34,  30,  38,  40,  31,  29,  36,  30) 
-
-  interarrivalTimes <- c(arrivalTimes[1], diff(arrivalTimes))
+  #
+  initTimes <- function()
+  {
+      arrivalTimes      <<- c(15, 47, 71, 111, 123, 152, 232, 245, 99999)
+      interarrivalTimes <<- c(arrivalTimes[1], diff(arrivalTimes))
+      serviceTimes      <<- c(43, 36, 34, 30, 38, 30, 31, 29)
+  }
 
   getInterarr <- function()
   {
@@ -138,6 +141,7 @@ The function returns a list containing:
       return(nextService)
   }
 
+  initTimes()
   numJobs <- length(serviceTimes)
   output <- ssq(maxArrivals = numJobs, interarrivalFcn = getInterarr, 
                 serviceFcn = getService, saveAllStats = TRUE)
@@ -148,19 +152,22 @@ The function returns a list containing:
   ############################################################################
   # example to show use of (simple) trace data for arrivals and service times,
   # allowing for reuse (recycling) of trace data times
-  smallQueueTrace <- list()
-  smallQueueTrace$arrivalTimes <- c(15, 47, 71, 111, 123, 152, 166, 226, 310, 320)
-  smallQueueTrace$serviceTimes <- c(43, 36, 34,  30,  38,  40,  31,  29,  36,  30) 
 
-  interarrivalTimes <- NULL
-  serviceTimes      <- NULL
+  initArrivalTimes <- function()
+  {
+      arrivalTimes      <<- c(15, 47, 71, 111, 123, 152, 232, 245)
+      interarrivalTimes <<- c(arrivalTimes[1], diff(arrivalTimes))
+  }
+
+  initServiceTimes <- function()
+  {
+      serviceTimes      <<- c(43, 36, 34, 30, 38, 30, 31, 29)
+  }
 
   getInterarr <- function()
   {
-      if (length(interarrivalTimes) == 0) { 
-            interarrivalTimes <<- c(smallQueueTrace$arrivalTimes[1], 
-                                    diff(smallQueueTrace$arrivalTimes))
-      }   
+      if (length(interarrivalTimes) == 0)  initArrivalTimes()
+
       nextInterarr <- interarrivalTimes[1]
       interarrivalTimes <<- interarrivalTimes[-1] # remove 1st element globally
       return(nextInterarr)
@@ -168,14 +175,15 @@ The function returns a list containing:
 
   getService <- function()
   {
-      if (length(serviceTimes) == 0) { 
-          serviceTimes <<- smallQueueTrace$serviceTimes
-      }   
+      if (length(serviceTimes) == 0)  initServiceTimes()
+
       nextService <- serviceTimes[1]
       serviceTimes <<- serviceTimes[-1]  # remove 1st element globally
       return(nextService)
   }
 
+  initArrivalTimes()
+  initServiceTimes()
   output <- ssq(maxArrivals = 100, interarrivalFcn = getInterarr, 
                 serviceFcn = getService, saveAllStats = TRUE)
   mean(output$interarrivalTimes)
