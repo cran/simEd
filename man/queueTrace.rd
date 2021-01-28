@@ -32,7 +32,7 @@
   #
   interarrivalTimes <- NULL
   serviceTimes      <- NULL
-  getInterarr <- function()
+  getInterarr <- function(...)
   {
       if (length(interarrivalTimes) == 0) { 
             interarrivalTimes <<- c(queueTrace$arrivalTimes[1], 
@@ -42,7 +42,7 @@
       interarrivalTimes <<- interarrivalTimes[-1] # remove 1st element globally
       return(nextInterarr)
   }
-  getService <- function()
+  getService <- function(...)
   {
       if (length(serviceTimes) == 0) { 
           serviceTimes <<- queueTrace$serviceTimes

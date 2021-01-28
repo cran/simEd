@@ -1,12 +1,69 @@
-## ------------------------------------------------------------------------- 
+## -------------------------------------------------------------------------
 ##  A Monte Carlo simulation of the dice game "craps".
 ##  Note that the axiomatic probability of winning is 244/495 ~= 0.493.
-##   
-##  Name              : craps.r 
+##
+##  Name              : craps.r
 ##  Authors           : Barry Lawson & Larry Leemis
 ##  Language          : R (part of simEd package)
 ##  Latest Revision   : 22 Nov 2017
-##  ------------------------------------------------------------------------- 
+##  -------------------------------------------------------------------------
+#'
+#' Monte Carlo Simulation of the Dice Game "Craps"
+#'
+#' @description
+#'  A Monte Carlo simulation of the dice game "craps".
+#'  Returns a point estimate of the probability of winning craps using fair dice.
+#'
+#' @param nrep Number of replications (plays of a single game of craps)
+#' @param seed Initial seed to the random number generator (NA uses current
+#'              state of random number generator; \code{NULL} seeds using system
+#'              clock)
+#' @param showProgress If \code{TRUE}, displays a progress bar on screen
+#'              during execution
+#'
+#' @details
+#'   Implements a Monte Carlo simulation of the dice game craps played with fair
+#'   dice.
+#'   A single play of the game proceeds as follows:
+#'     \itemize{
+#'       \item Two fair dice are rolled.  If the sum is 7 or 11, the player wins
+#'       immediately; if the sum is 2, 3, or 12, the player loses immediately.
+#'       Otherwise the sum becomes the \emph{point}.
+#'       \item The two dice continue to be rolled until either a sum of 7 is rolled
+#'       (in which case the player loses) or a sum equal to the \emph{point} is
+#'       rolled (in which case the player wins).
+#'     }
+#'   The simulation involves \code{nrep} replications of the game.
+#'
+#'   Note: When the value of \code{nrep} is large, the function will execute
+#'   noticeably faster when \code{showProgress} is set to \code{FALSE}.
+#'
+#' @return  Point estimate of the probability of winning at craps (a real-valued scalar).
+#'
+#' @seealso \code{\link[base:set.seed]{base::set.seed}}
+#'
+#' @template signature
+#' @concept  random variate generation
+#' @keywords misc
+#'
+#' @examples
+#'  # set the initial seed externally using set.seed;
+#'  # then use that current state of the generator with default nrep = 1000
+#'  set.seed(8675309)
+#'  craps()  # uses state of generator set above
+#'
+#'  # explicitly set the seed in the call to the function,
+#'  # using default nrep = 1000
+#'  craps(seed = 8675309)
+#'
+#'  # use the current state of the random number generator with nrep = 10000
+#'  prob <- craps(10000)
+#'
+#'  # explicitly set nrep = 10000 and seed = 8675309
+#'  probs <- craps(10000, 8675309)
+#'
+#' @export
+################################################################################
 
 craps <- function(nrep         = 1000, # number of replications
                   seed         = NA,   # NA:use rng state; NULL: system gen'd
@@ -31,7 +88,7 @@ craps <- function(nrep         = 1000, # number of replications
   ## ---------------------------------------------------------------------
   ## rollDice(): implement rolling two fair dice and summing up faces
   ## ---------------------------------------------------------------------
-  rollDice <- function() 
+  rollDice <- function()
   {
     return( base::sample(1:6, 1) + base::sample(1:6, 1) )
   }
@@ -40,7 +97,7 @@ craps <- function(nrep         = 1000, # number of replications
   ## keepRolling(point): roll until a 7 is obtained (return a 0 -- loss);
   ##                     or until the point is made (return a 1 -- win)
   ## ---------------------------------------------------------------------
-  keepRolling <- function(point) 
+  keepRolling <- function(point)
   {
     sum <- rollDice()
     while ((sum != point) && (sum != 7)) { sum <- rollDice() }
@@ -69,8 +126,8 @@ craps <- function(nrep         = 1000, # number of replications
       result <-
         switch(point,           # 'point' will be evaluated (0 = lose, 1 = win)
                NA,                     # 1 is impossible (should never reach)
-               0,                      # 2 is an immediate loss 
-               0,                      # 3 is an immediate loss 
+               0,                      # 2 is an immediate loss
+               0,                      # 3 is an immediate loss
                keepRolling(point),     # 4 becomes the point
                keepRolling(point),     # 5 becomes the point
                keepRolling(point),     # 6 becomes the point
@@ -79,7 +136,7 @@ craps <- function(nrep         = 1000, # number of replications
                keepRolling(point),     # 9 becomes the point
                keepRolling(point),     # 10 becomes the point
                1,                      # 11 is an immediate win
-               0)                      # 12 is an immediate loss 
+               0)                      # 12 is an immediate loss
 
       wins <- wins + result
 
@@ -91,7 +148,7 @@ craps <- function(nrep         = 1000, # number of replications
 
     } # for (i in 1:nrep)
 
-    # ensure progress bar runs through end 
+    # ensure progress bar runs through end
     if (interactive() && showProgress) {
        utils::setTxtProgressBar(bar, 1)
        close(bar)
@@ -111,4 +168,3 @@ craps <- function(nrep         = 1000, # number of replications
   return(main())
 
 } # craps()
-

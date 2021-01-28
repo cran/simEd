@@ -1,10 +1,32 @@
+# simEd 2.0.0
+
+* Added `ssqvis` to illustrate and animate the details of an event-driven
+  implementation of a single-server queueing system.  Includes depictions
+  of the calendar, inversion for variate generation, system clock and
+  timeline, the state of the queueing system, skyline functions, and
+  time-persistent and based-on-observation statistics.
+* Updated `ssq` and `msq` to include animation capability, illustrating
+  current state of the system and skyline functions.
+* Added `lehmer` to illustrate and animate the details of a multiplicative
+  linear congruential random number generator.
+* Added `accrej` to illustrate the technique of acceptance rejection for
+  variate generation in situations when inversion is not possible (e.g.,
+  for the Beta distribution).
+* Added `thinning` to illustrate the technique of thinning for generating
+  a non-homogeneous Poisson process.
+* Updated `v*` functions to allow returning in list form, primarily for
+  use in `ssqvis`.
+* Updated `i*` functions to improve step-by-step animation, and to plot
+  quantiles only in the inversion process when many variates are generated,
+  thereby reducing visual noise.
+
 # simEd 1.0.3
 
 * Added Monte Carlo simulation functions `galileo` and `craps` to simulate,
   respectively, Galileo's dice and the game of craps.
 * Includes minor updates to all inversion visualization functions (`ibinom`,
   `iexp`, `igeom`, `igamma`, `inorm`, `iunif`, and `iweibull`), allowing for
-  display or supression of plot title, and to respect by default any existing
+  display or suppression of plot title, and to respect by default any existing
   device layout but with ability to override via parameter.
 * Includes minor corrections and addenda to pdf/pmf equations in help files.
 

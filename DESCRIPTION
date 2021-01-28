@@ -1,21 +1,33 @@
 Package: simEd
-Version: 1.0.3
+Version: 2.0.0
 Title: Simulation Education
-Author: Barry Lawson, Larry Leemis
-Maintainer: Barry Lawson <blawson@richmond.edu>
-Imports: graphics, grDevices, methods, stats, utils
+Authors@R: c(
+  person("Barry", "Lawson", email = "blawson@richmond.edu", role = c("aut","cre")),
+  person("Larry", "Leemis", email = "leemis@math.wm.edu", role = "aut"),
+  person("Vadim", "Kudlay", email = "vadim.kudlay@richmond.edu", role = "aut"))
+Imports: graphics, grDevices, methods, stats, utils, shape
 Depends: rstream
-Description: Contains various functions to be used for simulation education, 
+Suggests: magick
+Description: Contains various functions to be used for simulation education,
     including simple Monte Carlo simulation functions, queueing simulation
     functions, variate generation functions capable of producing independent
     streams and antithetic variates, functions for illustrating random variate
     generation for various discrete and continuous distributions, and functions
-    to compute time-persistent statistics.  Also contains two queueing data sets
-    (one fabricated, one real-world) to facilitate input modeling.
+    to compute time-persistent statistics.  Also contains functions for 
+    visualizing: event-driven details of a single-server queue model; a Lehmer
+    random number generator; variate generation via acceptance-rejection; and
+    of generating a non-homogeneous Poisson process via thinning.  Also
+    contains two queueing data sets (one fabricated, one real-world) to
+    facilitate input modeling.
 License: GPL (>= 2)
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.1
+Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2017-11-26 23:51:17 UTC; blawson
+Packaged: 2021-01-27 23:36:15 UTC; blawson
+Author: Barry Lawson [aut, cre],
+  Larry Leemis [aut],
+  Vadim Kudlay [aut]
+Maintainer: Barry Lawson <blawson@richmond.edu>
 Repository: CRAN
-Date/Publication: 2017-11-27 04:05:15 UTC
+Date/Publication: 2021-01-28 15:10:02 UTC
