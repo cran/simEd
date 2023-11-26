@@ -19,7 +19,7 @@
 # @param showCDF logical; if \code{TRUE} (default), cdf plot appears, otherwise cdf 
 #        plot is suppressed
 # @param showPMF logical; if \code{TRUE} (default), PMF plot is
-#        appears, otherwise PDF plot is suppressed
+#        appears, otherwise PMF plot is suppressed
 # @param showECDF logical; if \code{TRUE} (default), ecdf plot appears,
 #        otherwise ecdf plot is suppressed 
 # @param show octal number indicating plots to display;  4: CDF, 2: PMF, 
@@ -34,8 +34,10 @@
 # @param populationColor Color used to display population
 # @param showTitle logical; if \code{TRUE} (default), displays a title in the 
 #        first of any displayed plots
-# @param respectLayout logical; if \code{TRUE} (default), respects existing 
+# @param respectLayout logical; if \code{FALSE} (default), respects existing 
 #        settings for device layout
+# @param restorePar logical; if \code{TRUE} (default), restores user's previous 
+#        par settings on function exit
 # @param getDensity  A density function for the distribution (i.e. \code{dpois} for Poisson)
 #    \cr (REQUIRED w/ NO DEFAULTS)
 # @param getDistro   A distribution function for the distribution (i.e. \code{ppois} for Poisson)
@@ -79,12 +81,15 @@
 #   distribution function
 #
 # @seealso \code{\link[=runif]{stats::runif}}
+#
 # @importFrom grDevices dev.hold dev.flush recordPlot replayPlot adjustcolor 
 # @importFrom stats quantile
 # 
-# @template signature
 # @concept  random variate generation
 #
+# @template signature
+# @keywords internal
+# @noRd
 #################################################################################
 PlotDiscrete <- function(u               = runif(1),
                          minPlotQuantile = 0.05,
@@ -102,6 +107,7 @@ PlotDiscrete <- function(u               = runif(1),
                          populationColor = "grey3",
                          showTitle       = TRUE,
                          respectLayout   = FALSE,
+                         restorePar      = TRUE,  # add 23 Nov 2023
                          getDensity,
                          getDistro,
                          getQuantile,
@@ -111,13 +117,18 @@ PlotDiscrete <- function(u               = runif(1),
                          titleStr        = ""
                         )
 {
+    checkVal(restorePar, "l")  # add 23 Nov 2023
+    if (plot && restorePar) 
+    {
+        oldpar <- par(no.readonly = TRUE)  # save current par settings
+        on.exit(par(oldpar)) # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+    }
+
     #############################################################################
     # Run base parameter checking
     #############################################################################
-    warnVal <- options("warn")          # save current warning setting...
-    oldpar  <- par(no.readonly = TRUE)  # save current par settings
-
-    options(warn = -1)  # suppress warnings
+    #warnVal <- options("warn")         # save current warning setting... (del 22 Nov 2023)
+    #options(warn = -1)  # suppress warnings -- remove RE CRAN req't (del 22 Nov 2023)
 
     checkVal(plot,     "l")
     checkVal(showCDF,  "l")
@@ -161,7 +172,7 @@ PlotDiscrete <- function(u               = runif(1),
     checkVal(getDistro,   "f")
     checkVal(getQuantile, "f")
 
-    options(warn = 1)  # set to immediate warnings
+    # options(warn = 1)  # set to immediate warnings (del 22 Nov 2023)
 
     #############################################################################
     # Initialize important variables
@@ -187,12 +198,12 @@ PlotDiscrete <- function(u               = runif(1),
     xAxisMax <- if (toY   < 1)  toX   + (0.02 * rangeX)  else  toX
 
     # Global variables to be used in later functions
-    xVals             <- NULL # Will be set of all xValues after inversion
-    xValsPlotted      <- NULL # Will store direct hash for x values plotted on
-    xValsPlotMax      <- 1    # Keeps running tally of the maximum plot count
+    xVals          <- NULL  # Will be set of all xValues after inversion
+    #xValsPlotted   <- NULL  # Will store direct hash for x values plotted on (del 23 Nov 2023)
+    #xValsPlotMax   <- 1     # Keeps running tally of the maximum plot count (del 23 Nov 2023)
 
     pmfYMax        <- NULL  # will store maximum Y for PMF plots
-    maxStepY       <- NULL  # maximum dashed-vertical height per variate value;
+    #maxStepY       <- NULL  # maximum dashed-vertical height per variate value; (del 23 Nov 2023)
                             # (used because multiple u's plot to the same
                             #  variate, so we try to avoid replotting over an
                             #  existing vertical dashed line - if one is already
@@ -206,19 +217,56 @@ PlotDiscrete <- function(u               = runif(1),
     #resetMaxStepY  <- FALSE # used to control resetting of maxStepY in special
                             # jump circumstance (read: last-minute hack)
 
-    vertOffset     <- NULL  # Used for generated spacing in CDF plotting
-    uXLoc          <- NULL  # Will Store location of points
+    #vertOffset     <- NULL  # Used for generated spacing in CDF plotting (del 23 Nov 2023)
+    #uXLoc          <- NULL  # Will Store location of points (del 23 Nov 2023)
 
     plot1          <- NULL  # Will store state of CDF plot
 
+    ################################################################################
+    # variables defined w/in scope of PlotDiscrete that make "good use of 
+    # superassignment" for stateful function use (mod 23 Nov 2023)
+    # (https://stat.ethz.ch/pipermail/r-help/2011-April/275905.html)
+    # (https://adv-r.hadley.nz/function-factories.html#stateful-funs)
+    #
     histInfo       <- NULL  # Will store histogram info for plotting on CDF/PMF
     maxStackHeight <- NULL  # Histogram data for highest bar
     maxHistDensity <- NULL  # Histogram data for max density
 
+    # keep track of the row we are plotting in, since the user can specify any
+    # mix of CDF/PMF/ECDF
+    plottingRow <- 1  # should be restricted to {1,2,3}
+
+    vertOffset     <- NULL  # Used for generated spacing in CDF plotting
+    uXLoc          <- NULL  # Will Store location of points
+
+    xValsPlotted   <- NULL  # Will store direct hash for x values plotted on
+    xValsPlotMax   <- 1     # Keeps running tally of the maximum plot count
+    maxStepY       <- NULL  # maximum dashed-vertical height per variate value;
+                            # (used because multiple u's plot to the same
+                            #  variate, so we try to avoid replotting over an
+                            #  existing vertical dashed line - if one is already
+                            #  drawn at that variate, draw only to top of the
+                            #  existing dashed line);
+                            # this has to be reset to 0's when significant 
+                            # replotting occurs (e.g. jump, switch to quantiles)
+                            # 09 Jan 2020 UPDATE: JUST PLOT TO BOTTOM OF RISER ONLY
+
+    emptyCDFPlot   <- NULL  # will have the plot area @ top with only CDF curve
+    prevCDFPlot    <- NULL  # will have CDF curve with previous inversions
+    prevCDFPlotCnt <- 0     # this counter will allow us to know when we need
+                            # to draw inversions as we near the end of a jump,
+                            # to allow the user to walk backwards from the jump
+
+    firstCDFQuantilesPlot <- NULL  # in case user jumps to end
+
+    # (add 23 Nov 2023)
+    pauseData      <- NULL # list used in step-by-step progress through viz
+    ################################################################################
+
     # Return inverted values function
     ReturnVals <- function(xVals) {
-      options(warn = warnVal$warn)
-      par(oldpar)
+      #options(warn = warnVal$warn)  # remove RE CRAN req't (del 22 Nov 2023)
+      #par(oldpar)                   # use on.exit above per CRAN (del 22 Nov 2023)
       if (is.null(xVals))  return(invisible(xVals))  else  return(xVals)
     }
 
@@ -237,7 +285,7 @@ PlotDiscrete <- function(u               = runif(1),
       # if subset empty don't plot any variates; only PMF and/or CDF
       if (is.null(xSubset)) { maxHistDensity <<- 0; return() }
 
-      options(warn = -1)  # suppress warnings
+      # options(warn = -1)  # suppress warnings -- remove RE CRAN req't (del 22 Nov 2023)
 
       maxBins  <- 500
       histInfo <<- NULL
@@ -288,14 +336,14 @@ PlotDiscrete <- function(u               = runif(1),
       if (is.null(histInfo)) {
         histInfo <<- tryCatch(
           hist(xSubset, breaks = "sturges", plot = FALSE), error = function(err) {
-            print(err); stop('inorm: Error internally using hist()') })}
+            warning(err); stop('inorm: Error internally using hist()') })}
 
       if (length(histInfo$breaks) > maxBins)
         stop(paste('inorm: Error using hist() -- more than', maxBins, 'bins'))
 
       maxHistDensity <<- max(histInfo$density)
 
-      options(warn = 1)  # reset to our inorm state: immediate warnings
+      # options(warn = 1)  # reset to our inorm state: immediate warnings (del 22 Nov 2023)
 
     }
 
@@ -312,7 +360,10 @@ PlotDiscrete <- function(u               = runif(1),
       # this corresponds to just showing the pmf and/or cdf distribution withou
       # an inversion
       if (plot == FALSE) {
-        warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)")
+        # mod 23 Nov 2023
+        #warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)")
+        warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)",
+                immediate. = TRUE)
         plot <- TRUE
       }
       # recall function defaults: showPMF = TRUE, showCDF = TRUE, showECDF = TRUE
@@ -321,7 +372,7 @@ PlotDiscrete <- function(u               = runif(1),
         showCDF  <- FALSE
         showECDF <- TRUE
       } else {
-        # assuming they want to see PDF only
+        # assuming they want to see PMF only
         showCDF <- FALSE
         showECDF <- FALSE
       }
@@ -339,14 +390,21 @@ PlotDiscrete <- function(u               = runif(1),
     if (plot == FALSE)  return(ReturnVals(xVals))
 
     if (showCDF == FALSE && showPMF == FALSE && showECDF == FALSE) {
-      if (plot == TRUE)
-        warning("ignoring plot since showCDF, showPMF, and showECDF are all FALSE")
+      if (plot == TRUE) {
+        # mod 23 Nov 2023
+        #warning("ignoring plot since showCDF, showPMF, and showECDF are all FALSE")
+        warning("ignoring plot since showCDF, showPMF, and showECDF are all FALSE",
+                immediate. = TRUE)
+      }
       return(ReturnVals(xVals))
     }
 
     if (round(fromX, digits = 7) == round(toX, digits = 7)) {
+      # mod 23 Nov 2023
       warning(paste("politely declining to plot:",
-                    "essentially equal min/max quantile values"))
+                    "essentially equal min/max quantile values"),
+              immediate. = TRUE)
+      #              "essentially equal min/max quantile values"))
       return(ReturnVals(xVals))
     }
 
@@ -365,20 +423,23 @@ PlotDiscrete <- function(u               = runif(1),
     userPlots <- prod(par("mfrow"))
     if (respectLayout) {
       if (userPlots < numPlotsToShow)
+        # mod 23 Nov 2023
         warning(paste(
           'Cannot display the requested ', numPlotsToShow,
           ' plots simultaneously because layout is set for ', userPlots,
           ' plot', if (userPlots > 1) 's. ' else '. ',
           'Please use \'par\' to set layout appropriately, e.g., ',
           'par(mfrow = c(', numPlotsToShow, ', 1)) or ',
-          'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""))
+          'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""),
+          immediate. = TRUE)
+          # 'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""))
     } else {
         par(mfrow = c(numPlotsToShow, 1))
     }
 
     # keep track of the row we are plotting in, since the user can specify any
     # mix of CDF/PMF/ECDF
-    plottingRow <- 1  # should be restricted to {1,2,3}
+    #plottingRow <- 1  # should be restricted to {1,2,3}  # (del 23 Nov 2023)
 
     # set default margins for plots
     botMar <- if (numPlotsToShow > 1) 4.1 else 5.1
@@ -479,7 +540,7 @@ PlotDiscrete <- function(u               = runif(1),
       }
 
       # update which plottingRow we are sitting on (depends on values of
-      # showCDF, showPDF, showCDF), mod, keeping min value @ 1
+      # showCDF, showPMF, showCDF), mod, keeping min value @ 1
       plottingRow <<- (plottingRow %% numPlotsToShow) + 1
 
       do.call("clip", as.list(par("usr"))) # reset clip
@@ -896,7 +957,12 @@ PlotDiscrete <- function(u               = runif(1),
             sym$arrow, "  x = ", xVals[i])
     }
 
-    pauseData <<- SetPausePlot(
+    # changing <<- to <- per CRAN req't (23 Nov 2023)
+    # pauseData now defined in local scope of PlotDiscrete, as with other
+    # internal-to-function variables
+    #
+    #pauseData <<- SetPausePlot(  # (del 23 Nov 2023)
+    pauseData <- SetPausePlot(
         plotDelay      = plotDelay, 
         prompt         = "Hit 'ENTER' to proceed, 'q' to quit, or 'h' for help/more options: ",
         viewCommand    = c("latest"),
@@ -907,7 +973,7 @@ PlotDiscrete <- function(u               = runif(1),
                                  # (see ~506-511 of compPlot.R:displayInteractiveMenu)
         viewInstruct   = c("'latest'          = displays value of latest inversion"),
                            #"toggles CDF display for next inversion",
-                           #"toggles PDF display for next inversion",
+                           #"toggles PMF display for next inversion",
                            #"toggles ECDF display for next inversion"),
         viewFunction   = list("1" = function(i) viewLatestInversion(i))
     )
@@ -1066,13 +1132,15 @@ PlotDiscrete <- function(u               = runif(1),
     dev.flush(dev.hold())
     dev.hold()
 
-    emptyCDFPlot   <- NULL  # will have the plot area @ top with only CDF curve
-    prevCDFPlot    <- NULL  # will have CDF curve with previous inversions
-    prevCDFPlotCnt <- 0     # this counter will allow us to know when we need
-                            # to draw inversions as we near the end of a jump,
-                            # to allow the user to walk backwards from the jump
-
-    firstCDFQuantilesPlot <- NULL  # in case user just to end
+    # following assignments moved above RE CRAN concern of using <<- for global
+    # (del 23 Nov 2023)
+    #emptyCDFPlot   <- NULL  # will have the plot area @ top with only CDF curve
+    #prevCDFPlot    <- NULL  # will have CDF curve with previous inversions
+    #prevCDFPlotCnt <- 0     # this counter will allow us to know when we need
+    #                        # to draw inversions as we near the end of a jump,
+    #                        # to allow the user to walk backwards from the jump
+    #
+    #firstCDFQuantilesPlot <- NULL  # in case user jumps to end
 
     # NB: we choose to allow plotDelay == 0 to enter the loop so that
     # compPlot.R:PausePlot can display a progress bar

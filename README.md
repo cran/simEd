@@ -1,6 +1,12 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # simEd (Simulation Education)
+
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/blawson-bates/simEd/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/blawson-bates/simEd/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 This package contains various functions to be used for simulation
 education, including: simple Monte Carlo simulation functions; queueing
@@ -14,13 +20,6 @@ process via thinning, and (e) random variate generation for various
 discrete and continuous distributions; and functions to compute
 time-persistent statistics. The package also contains two queueing data
 sets (one fabricated, one real-world) to facilitate input modeling.
-
-**Request From Authors**: If you adopt and use this package for your
-simulation course, we would greatly appreciate were you to email us
-(`blawson<at>richmond<dot>edu` or `leemis<at>math<dot>wm<dot>edu`) to
-let us know, as we would like to maintain a list of adopters. Please
-include your name, university/affiliation, and course name/number.
-Thanks!
 
 ## Example
 
@@ -44,7 +43,7 @@ abline(h = avg, lwd = 2, col = "red")
 abline(h = c(avg - sd, avg + sd), lwd = 2, lty = "dotted", col = "red")
 ```
 
-## Installing
+## Installation
 
 Install the current version of `simEd` from CRAN using
 `install.packages("simEd")`.
@@ -64,19 +63,19 @@ course in discrete-event simulation.
 
 This package contains animation functions for visualizing:
 
--   event-driven details of a single-server queue model: `ssqvis`;
--   a Lehmer random number generator: `lehmer`;
--   variate generation via acceptance-rejection: `accrej`;
--   generation of a non-homogeneous Poisson process via thinning:
-    `thinning`.
+- event-driven details of a single-server queue model: `ssqvis`;
+- a Lehmer random number generator: `lehmer`;
+- variate generation via acceptance-rejection: `accrej`;
+- generation of a non-homogeneous Poisson process via thinning:
+  `thinning`.
 
 This package contains variate generators capable of independent streams
 (based on Josef Leydold’s `rstream` package) and antithetic variates for
 four discrete and eleven continuous distributions:
 
--   discrete: `vbinom`, `vgeom`, `vnbinom`, `vpois`,
--   continuous: `vbeta`, `vcauchy`, `vchisq`, `vexp`, `vgamma`,
-    `vlnorm`, `vlogis`, `vnorm`, `vt`, `vunif`, `vweibull`
+- discrete: `vbinom`, `vgeom`, `vnbinom`, `vpois`,
+- continuous: `vbeta`, `vcauchy`, `vchisq`, `vexp`, `vgamma`, `vlnorm`,
+  `vlogis`, `vnorm`, `vt`, `vunif`, `vweibull`
 
 All of the variate generators use inversion, and are therefore monotone
 and synchronized.
@@ -84,22 +83,22 @@ and synchronized.
 The package contains functions to visualize variate generation for the
 same four discrete and eleven continuous distributions:
 
--   discrete: `ibinom`, `igeom`, `inbinom`, `ipois`,
--   continuous: `ibeta`, `icauchy`, `ichisq`, `iexp`, `igamma`,
-    `ilnorm`, `ilogis`, `inorm`, `it`, `iunif`, `iweibull`
+- discrete: `ibinom`, `igeom`, `inbinom`, `ipois`,
+- continuous: `ibeta`, `icauchy`, `ichisq`, `iexp`, `igamma`, `ilnorm`,
+  `ilogis`, `inorm`, `it`, `iunif`, `iweibull`
 
 The package contains functions that implement Monte Carlo simulation
 approaches for estimating probabilities in two different dice games:
 
--   Galileo’s dice problem: `galileo`
--   craps: `craps`
+- Galileo’s dice problem: `galileo`
+- craps: `craps`
 
 The package also contains functions that are event-driven simulation
 implementations of a single-server single-queue system and of a
 multiple-server single-queue system:
 
--   single-server: `ssq`
--   multiple-server: `msq`
+- single-server: `ssq`
+- multiple-server: `msq`
 
 Both queueing functions are extensible in allowing the user to provide
 custom arrival and service process functions. Both functions provide
@@ -108,31 +107,30 @@ animation.
 The package contains four functions primarily for visualizing simulation
 concepts:
 
--   event-driven details of a single-server queuing system: `ssqvis`
--   Lehmer random number generator: `lehmer`
--   variate generation via acceptance-rejection: `accrej`
--   generating a non-homogeneous Poisson process via thinning:
-    `thinning`
+- event-driven details of a single-server queuing system: `ssqvis`
+- Lehmer random number generator: `lehmer`
+- variate generation via acceptance-rejection: `accrej`
+- generating a non-homogeneous Poisson process via thinning: `thinning`
 
 The package contains three functions for computing time-persistent
 statistics:
 
--   time-average mean: `meanTPS`
--   time-average standard deviation: `sdTPS`
--   time-average quantiles: `quantileTPS`
+- time-average mean: `meanTPS`
+- time-average standard deviation: `sdTPS`
+- time-average quantiles: `quantileTPS`
 
 The package also masks two functions from the `stats` package:
 
--   `set.seed`, which explicitly calls the `stats` version in addition
-    to setting up seeds for the independent streams in the package;
--   `sample`, which provides capability to use independent streams and
-    antithetic variates.
+- `set.seed`, which explicitly calls the `stats` version in addition to
+  setting up seeds for the independent streams in the package;
+- `sample`, which provides capability to use independent streams and
+  antithetic variates.
 
 Finally, the package provides two queueing data sets to facilitate input
 modeling:
 
--   `queueTrace`, which contains 1000 arrival times and 1000 service
-    times (all fabricated) for a single-server queueing system;
--   `tylersGrill`, which contains 1434 arrival times and 110 (sampled)
-    service times corresponding to actual data collected during one
-    business day at Tyler’s Grill at the University of Richmond.
+- `queueTrace`, which contains 1000 arrival times and 1000 service times
+  (all fabricated) for a single-server queueing system;
+- `tylersGrill`, which contains 1434 arrival times and 110 (sampled)
+  service times corresponding to actual data collected during one
+  business day at Tyler’s Grill at the University of Richmond.

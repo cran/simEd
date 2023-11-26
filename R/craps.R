@@ -38,7 +38,7 @@
 #'   Note: When the value of \code{nrep} is large, the function will execute
 #'   noticeably faster when \code{showProgress} is set to \code{FALSE}.
 #'
-#' @return  Point estimate of the probability of winning at craps (a real-valued scalar).
+#' @returns Point estimate of the probability of winning at craps (a real-valued scalar).
 #'
 #' @seealso \code{\link[base:set.seed]{base::set.seed}}
 #'
@@ -60,7 +60,7 @@
 #'  prob <- craps(10000)
 #'
 #'  # explicitly set nrep = 10000 and seed = 8675309
-#'  probs <- craps(10000, 8675309)
+#'  prob <- craps(10000, 8675309)
 #'
 #' @export
 ################################################################################

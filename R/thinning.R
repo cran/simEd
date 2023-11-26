@@ -50,7 +50,7 @@
 #'            As an alternative to visualizing, event times can be generated
 #             in batch mode using \code{plot = FALSE}.
 #'
-#' @return   returns the generated random event times
+#' @returns   returns a vector of the generated random event times
 #'
 #' @concept  non-homogeneous Poisson process
 #'
@@ -64,8 +64,9 @@
 #' @examples
 #' 
 #' nhpp <- thinning(maxTime = 12, seed = 8675309, plotDelay = 0)
-#' \dontrun{
 #' nhpp <- thinning(maxTime = 24, seed = 8675309, plotDelay = 0)
+#'
+#' \donttest{
 #' nhpp <- thinning(maxTime = 48, seed = 8675309, plotDelay = 0)
 #'
 #' # thinning with custom intensity function and default majorizing function
@@ -124,16 +125,16 @@
 #'
 #' # thinning with simple custom intensity function and custom majorizing
 #' intensity <- function(t) {
-#'    if      (t < 12) t
-#'   else if (t < 24) 24 - t
-#'   else if (t < 36) t - 24
-#'   else             48 - t
+#'     if      (t < 12) t
+#'     else if (t < 24) 24 - t
+#'     else if (t < 36) t - 24
+#'     else             48 - t
 #' }
 #' majorizing <- data.frame(
-#'   x = c(0, 12, 24, 36, 48),
-#'   y = c(1, 13,  1, 13,  1))
+#'     x = c(0, 12, 24, 36, 48),
+#'     y = c(1, 13,  1, 13,  1))
 #' times <- thinning(plotDelay = 0, intensityFcn = intensity,
-#'   majorizingFcn = majorizing , majorizingFcnType = "pwl", maxTime = 48)
+#'     majorizingFcn = majorizing , majorizingFcnType = "pwl", maxTime = 48)
 #' }
 #'
 #' @export
@@ -152,46 +153,64 @@ thinning <- function(
                 #fontScaleRatio   = c(1, 3)  # save for future release
             ) 
 {
+  #############################################################################
+
+  # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+  if (plot)
+  {
+    oldpar <- par(no.readonly = TRUE)  # save current par settings (add 22 Nov 2023)
+    on.exit(par(oldpar))               # add (22 Nov 2023)
+  }
 
   #############################################################################
   # Do parameter checking and handling; stop execution or warn if erroneous
   #############################################################################
-  {
-    checkVal(seed, "i", min = 1, na = TRUE, null = TRUE)
-    checkVal(maxTime, "i", min = 1)
+  checkVal(seed, "i", min = 1, na = TRUE, null = TRUE)
+  checkVal(maxTime, "i", min = 1)
 
-    #intensityFcn <- function(x) { 
-    #    #day <- 24 * floor(x/24)
-    #    day <- 24 * as.integer(x/24)
-    #    return(80 * (dnorm(x, day + 6,    2.5) + 
-    #                 dnorm(x, day + 12.5, 1.5) + 
-    #                 dnorm(x, day + 19,   2.0)))
-    #}
-    
-    checkVal(intensityFcn, "f")
-    
-    checkVal(maxTrials, "i", min = 1)
-    checkVal(plot, "l")
-    checkVal(showTitle, "l")
-
-    if (!isValNum(plotDelay) || (plotDelay < 0 && plotDelay != -1))
-      stop("'plotDelay' must be a numeric value (in secs) >= 0 or -1 (interactive mode)")
-    
-    #if (any(is.na(fontScaleRatio)) || length(fontScaleRatio) < 2) {
-    #  stop("fontScaleRatio must be a list of two values")
-    #}
-  }
-
-  #############################################################################
-
-  numBins = maxTime #* 2
-  binWidth = maxTime / numBins
-  bins = rep(0, numBins)
-  breaks = (0:numBins * binWidth)
-  mids = (0:numBins * binWidth) + (binWidth / 2)
-
-  #############################################################################
+  #intensityFcn <- function(x) { 
+  #    #day <- 24 * floor(x/24)
+  #    day <- 24 * as.integer(x/24)
+  #    return(80 * (dnorm(x, day + 6,    2.5) + 
+  #                 dnorm(x, day + 12.5, 1.5) + 
+  #                 dnorm(x, day + 19,   2.0)))
+  #}
   
+  checkVal(intensityFcn, "f")
+  
+  checkVal(maxTrials, "i", min = 1)
+  checkVal(plot, "l")
+  checkVal(showTitle, "l")
+
+  if (!isValNum(plotDelay) || (plotDelay < 0 && plotDelay != -1))
+    stop("'plotDelay' must be a numeric value (in secs) >= 0 or -1 (interactive mode)")
+  
+  #if (any(is.na(fontScaleRatio)) || length(fontScaleRatio) < 2) {
+  #  stop("fontScaleRatio must be a list of two values")
+  #}
+
+  ################################################################################
+  # variables defined w/in scope of thinning that make "good use of 
+  # superassignment" for stateful function use (mod 23 Nov 2023)
+  # (https://stat.ethz.ch/pipermail/r-help/2011-April/275905.html)
+  # (https://adv-r.hadley.nz/function-factories.html#stateful-funs)
+  #
+  # (add 23 Nov 2023)
+  pauseData <- NULL # list used in step-by-step progress through viz
+
+  xvals <- c(0)
+  mvals <- c()
+  hvals <- c()
+
+  numBins  <- maxTime #* 2
+  binWidth <- maxTime / numBins
+  bins     <- rep(0, numBins)
+  breaks   <- (0:numBins * binWidth)
+  mids     <- (0:numBins * binWidth) + (binWidth / 2)
+  ################################################################################
+
+  #############################################################################
+
   # Diagnostic boxed to show range of subplot windows
   showBoxes = FALSE
   
@@ -287,9 +306,9 @@ thinning <- function(
   ### --------------   BEGIN FUNCTION DEFINITIONS FOR MAIN   --------------  ###
   ##############################################################################
   
-  xvals <- c(0)
-  mvals <- c()
-  hvals <- c()
+  #xvals <- c(0) # del 23 Nov 2023
+  #mvals <- c()  # del 23 Nov 2023
+  #hvals <- c()  # del 23 Nov 2023
   
   DrawThinningPlot <- function(tupair, times, accepted, AccXs, AccYs, RejXs, RejYs) 
   {
@@ -607,7 +626,13 @@ thinning <- function(
     if (is.null(seed) || is.numeric(seed))  simEd::set.seed(seed)
     
     # Initialize streamlines pausing functionality
-    pauseData <<- SetPausePlot(
+
+    # changing <<- to <- per CRAN req't (23 Nov 2023)
+    # pauseData now defined in local scope of thinning, as with other
+    # internal-to-function variables
+    #
+    #pauseData <<- SetPausePlot(  # (del 23 Nov 2023)
+    pauseData <- SetPausePlot(
       plotDelay = plotDelay,
       prompt    = "Hit 'ENTER' to proceed, 'q' to quit, or 'h' for help/more options: "
     )
@@ -782,7 +807,9 @@ thinning <- function(
         PausePlot(pauseData = pauseData, closeProgressBar = TRUE)
         PlotFigures(e1, u1, currtime, accepted)
         dev.flush(dev.hold())
-        par(fig = c(0,1,0,1), mfrow = c(1,1), mar = c(5.1,4.1,4.1,2.1))
+
+        ## using on.exit() for par per CRAN suggestion (del 22 Nov 2023)
+        #par(fig = c(0,1,0,1), mfrow = c(1,1), mar = c(5.1,4.1,4.1,2.1))
     }
 
     return(AccXs)

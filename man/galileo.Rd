@@ -16,22 +16,22 @@ state of random number generator; NULL seeds using system clock)}
 }
 \value{
 An 18-element vector of point estimates of the probabilities.
- (Because a sum of 1 or 2 is not possible, the corresponding entries in the
- returned vector have value \code{NA}.)
+(Because a sum of 1 or 2 is not possible, the corresponding entries in the
+returned vector have value \code{NA}.)
 }
 \description{
 A Monte Carlo simulation of the Galileo's Dice problem.
-   Returns a vector containing point estimates of the probabilities of the
-   sum of three fair dice for sums 3, 4, \eqn{\ldots}, 18.
+Returns a vector containing point estimates of the probabilities of the
+sum of three fair dice for sums 3, 4, \eqn{\ldots}, 18.
 }
 \details{
 Implements a Monte Carlo simulation of the Galileo's Dice problem.
- The simulation involves \code{nrep} replications of rolling three dice and
- summing the up-faces, and computing point estimates of the probabilities
- of each possible sum 3, 4, \eqn{\ldots}, 18.
+The simulation involves \code{nrep} replications of rolling three dice and
+summing the up-faces, and computing point estimates of the probabilities
+of each possible sum 3, 4, \eqn{\ldots}, 18.
 
- Note: When the value of \code{nrep} is large, the function will execute
- noticeably faster when \code{showProgress} is set to \code{FALSE}.
+Note: When the value of \code{nrep} is large, the function will execute
+noticeably faster when \code{showProgress} is set to \code{FALSE}.
 }
 \examples{
  # set the initial seed externally using set.seed;
@@ -44,16 +44,16 @@ Implements a Monte Carlo simulation of the Galileo's Dice problem.
  galileo(seed = 8675309)
 
  # use the current state of the random number generator with nrep = 10000
- probs <- galileo(10000)
+ prob <- galileo(10000)
 
  # explicitly set nrep = 10000 and seed = 8675309
- probs <- galileo(10000, 8675309)
+ prob <- galileo(10000, 8675309)
 
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{Monte Carlo simulation}
 \keyword{misc}

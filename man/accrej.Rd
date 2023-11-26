@@ -27,7 +27,7 @@ variates are to be drawn}
 corresponding to a constant majorizing function that is
 1.01 times the maximum value of the pdf. May
 alternatively be provided as a user-specified function,
-or as a data frame requiring additional notation as 
+or as a data frame requiring additional notation as
 either piecewise-constant or piecewise-linear.  See
 examples.}
 
@@ -60,31 +60,34 @@ Returns the n generated variates accepted.
 }
 \description{
 This function animates the process of generating variates via
-         acceptance-rejection for a specified density function (pdf) bounded
-         by a specified majorizing function.
+acceptance-rejection for a specified density function (pdf) bounded
+by a specified majorizing function.
 }
 \details{
-There are three modes for visualizing the acceptance-rejection 
-           algorithm for generating random variates from a particular 
-           probability distribution:  
-           \itemize{
-              \item interactive advance (\code{plotDelay = -1}), where 
-                 pressing the 'ENTER' key advances to the next step
-                 (an accepted random variate) in the algorithm, 
-                 typing 'j #' jumps ahead # steps,
-                 typing 'q' quits immediately,
-                 and typing 'e' proceeds to the end; 
-              \item automatic advance (\code{plotDelay} > 0); or
-              \item final visualization only (\code{plotDelay = 0}).
-           }
-           As an alternative to visualizing, variates can be generated
+There are three modes for visualizing the acceptance-rejection
+algorithm for generating random variates from a particular
+probability distribution:
+\itemize{
+\item interactive advance (\code{plotDelay = -1}), where
+pressing the 'ENTER' key advances to the next step
+(an accepted random variate) in the algorithm,
+typing 'j #' jumps ahead # steps,
+typing 'q' quits immediately,
+and typing 'e' proceeds to the end;
+\item automatic advance (\code{plotDelay} > 0); or
+\item final visualization only (\code{plotDelay = 0}).
+}
+As an alternative to visualizing, variates can be generated
 }
 \examples{
 
 accrej(n = 20, seed = 8675309, plotDelay = 0)
-\dontrun{
 accrej(n = 10, seed = 8675309, plotDelay = 0.1)
-accrej(n = 10, seed = 8675309, plotDelay = -1)
+
+# interactive mode
+if (interactive()) {
+  accrej(n = 10, seed = 8675309, plotDelay = -1)
+}
 
 # Piecewise-constant majorizing function
 m <- function(x) {
@@ -92,29 +95,28 @@ m <- function(x) {
   else if (x < 0.85) 2.5
   else               1.5
 }
-accrej(n = 100, seed = 8675309, majorizingFcn = m, plotDelay = 0)
+accrej(n = 10, seed = 8675309, majorizingFcn = m, plotDelay = 0)
 
 # Piecewise-constant majorizing function as data frame
 m <- data.frame(
   x = c(0.0, 0.3, 0.85, 1.0),
   y = c(1.0, 1.0, 2.5,  1.5))
-accrej(n = 100, seed = 8675309, majorizingFcn = m, 
+accrej(n = 10, seed = 8675309, majorizingFcn = m, 
        majorizingFcnType = "pwc", plotDelay = 0)
 
 # Piecewise-linear majorizing function as data frame
 m <- data.frame(
    x = c(0.0, 0.1, 0.3, 0.5, 0.7, 1.0), 
    y = c(0.0, 0.5, 1.1, 2.2, 1.9, 1.0))
-accrej(n = 100, seed = 8675309, majorizingFcn = m, 
+accrej(n = 10, seed = 8675309, majorizingFcn = m, 
        majorizingFcnType = "pwl", plotDelay = 0)
 
 # invalid majorizing function; should give warning
-accrej(n = 20, majorizingFcn = function(x) dbeta(x, 1, 3), plotDelay = 0)
-}
+try(accrej(n = 20, majorizingFcn = function(x) dbeta(x, 1, 3), plotDelay = 0))
 
 # Piecewise-linear majorizing function with power-distribution density function
 m <- data.frame(x = c(0, 1, 2), y = c(0, 0.375, 1.5))
-samples <- accrej(n = 100, pdf = function(x) (3 / 8) * x ^ 2, support = c(0,2),
+samples <- accrej(n = 10, pdf = function(x) (3 / 8) * x ^ 2, support = c(0,2),
                   majorizingFcn = m, majorizingFcnType = "pwl", plotDelay = 0)
 
 }

@@ -50,7 +50,7 @@
 #'            As an alternative to visualizing, variates can be generated
 #             when \code{plot = FALSE}.
 #'
-#' @return   Returns the n generated variates accepted.
+#' @returns  Returns the n generated variates accepted.
 #'
 #' @concept  random variate generation
 #' 
@@ -61,9 +61,12 @@
 #' @examples
 #'
 #' accrej(n = 20, seed = 8675309, plotDelay = 0)
-#' \dontrun{
 #' accrej(n = 10, seed = 8675309, plotDelay = 0.1)
-#' accrej(n = 10, seed = 8675309, plotDelay = -1)
+#'
+#' # interactive mode
+#' if (interactive()) {
+#'   accrej(n = 10, seed = 8675309, plotDelay = -1)
+#' }
 #'
 #' # Piecewise-constant majorizing function
 #' m <- function(x) {
@@ -71,29 +74,28 @@
 #'   else if (x < 0.85) 2.5
 #'   else               1.5
 #' }
-#' accrej(n = 100, seed = 8675309, majorizingFcn = m, plotDelay = 0)
-#'
+#' accrej(n = 10, seed = 8675309, majorizingFcn = m, plotDelay = 0)
+#' 
 #' # Piecewise-constant majorizing function as data frame
 #' m <- data.frame(
 #'   x = c(0.0, 0.3, 0.85, 1.0),
 #'   y = c(1.0, 1.0, 2.5,  1.5))
-#' accrej(n = 100, seed = 8675309, majorizingFcn = m, 
+#' accrej(n = 10, seed = 8675309, majorizingFcn = m, 
 #'        majorizingFcnType = "pwc", plotDelay = 0)
-#'
+#' 
 #' # Piecewise-linear majorizing function as data frame
 #' m <- data.frame(
 #'    x = c(0.0, 0.1, 0.3, 0.5, 0.7, 1.0), 
 #'    y = c(0.0, 0.5, 1.1, 2.2, 1.9, 1.0))
-#' accrej(n = 100, seed = 8675309, majorizingFcn = m, 
+#' accrej(n = 10, seed = 8675309, majorizingFcn = m, 
 #'        majorizingFcnType = "pwl", plotDelay = 0)
 #' 
 #' # invalid majorizing function; should give warning
-#' accrej(n = 20, majorizingFcn = function(x) dbeta(x, 1, 3), plotDelay = 0)
-#' }
+#' try(accrej(n = 20, majorizingFcn = function(x) dbeta(x, 1, 3), plotDelay = 0))
 #' 
 #' # Piecewise-linear majorizing function with power-distribution density function
 #' m <- data.frame(x = c(0, 1, 2), y = c(0, 0.375, 1.5))
-#' samples <- accrej(n = 100, pdf = function(x) (3 / 8) * x ^ 2, support = c(0,2),
+#' samples <- accrej(n = 10, pdf = function(x) (3 / 8) * x ^ 2, support = c(0,2),
 #'                   majorizingFcn = m, majorizingFcnType = "pwl", plotDelay = 0)
 #'
 #' @export
@@ -112,6 +114,22 @@ accrej <- function(
                 #fontScaleRatio   = c(1, 3)   # save for future release
           )
 {
+  # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+  if (plot)
+  {
+    oldpar <- par(no.readonly = TRUE)  # save current par settings (add 22 Nov 2023)
+    on.exit(par(oldpar))               # add (22 Nov 2023)
+  }
+
+  ################################################################################
+  # variables defined w/in scope of accrej that make "good use of 
+  # superassignment" for stateful function use (mod 23 Nov 2023)
+  # (https://stat.ethz.ch/pipermail/r-help/2011-April/275905.html)
+  # (https://adv-r.hadley.nz/function-factories.html#stateful-funs)
+  #
+  # (add 23 Nov 2023)
+  pauseData <- NULL # list used in step-by-step progress through viz
+  ################################################################################
 
   #############################################################################
   # Do parameter checking and handling; stop execution or warn if erroneous
@@ -493,7 +511,12 @@ accrej <- function(
     if (is.null(seed) || is.numeric(seed))  simEd::set.seed(seed)
     
     # Initialize streamlines pausing functionality
-    pauseData <<- SetPausePlot(
+    # changing <<- to <- per CRAN req't (23 Nov 2023)
+    # pauseData now defined in local scope of accrej, as with other
+    # internal-to-function variables
+    #
+    #pauseData <<- SetPausePlot(  # (del 23 Nov 2023)
+    pauseData <- SetPausePlot(
       plotDelay = plotDelay,
       prompt    = "Hit 'ENTER' to proceed, 'q' to quit, or 'h' for help/more options: "
     )

@@ -27,7 +27,7 @@ time.}
 corresponding to a constant majorizing function that is
 1.01 times the maximum value of the intensity function.
 May alternatively be provided as a user-specified function,
-or as a data frame requiring additional notation as 
+or as a data frame requiring additional notation as
 either piecewise-constant or piecewise-linear.  See
 examples.}
 
@@ -54,35 +54,36 @@ interactive mode, where the user is queried for input
 to progress.}
 }
 \value{
-returns the generated random event times
+returns a vector of the generated random event times
 }
 \description{
-This function animates the "thinning" approach the 
-             generation of the random event times for a non-homogeneous
-             Poisson process with a specified intensity function, given a
-             majorizing function that dominates the intensity function.
+This function animates the "thinning" approach the
+generation of the random event times for a non-homogeneous
+Poisson process with a specified intensity function, given a
+majorizing function that dominates the intensity function.
 }
 \details{
 There are three modes for visualizing Lewis and Shedler's thinning
-          algorithm for generating random event times for a non-homogeneous
-          Poisson process with a particular intensity function:
-           \itemize{
-              \item interactive advance (\code{plotDelay = -1}), where 
-                 pressing the 'ENTER' key advances to the next step
-                 (an accepted random variate) in the algorithm, 
-                 typing 'j #' jumps ahead # steps,
-                 typing 'q' quits immediately,
-                 and typing 'e' proceeds to the end; 
-              \item automatic advance (\code{plotDelay} > 0); or
-              \item final visualization only (\code{plotDelay = 0}).
-           }
-           As an alternative to visualizing, event times can be generated
+algorithm for generating random event times for a non-homogeneous
+Poisson process with a particular intensity function:
+\itemize{
+\item interactive advance (\code{plotDelay = -1}), where
+pressing the 'ENTER' key advances to the next step
+(an accepted random variate) in the algorithm,
+typing 'j #' jumps ahead # steps,
+typing 'q' quits immediately,
+and typing 'e' proceeds to the end;
+\item automatic advance (\code{plotDelay} > 0); or
+\item final visualization only (\code{plotDelay = 0}).
+}
+As an alternative to visualizing, event times can be generated
 }
 \examples{
 
 nhpp <- thinning(maxTime = 12, seed = 8675309, plotDelay = 0)
-\dontrun{
 nhpp <- thinning(maxTime = 24, seed = 8675309, plotDelay = 0)
+
+\donttest{
 nhpp <- thinning(maxTime = 48, seed = 8675309, plotDelay = 0)
 
 # thinning with custom intensity function and default majorizing function
@@ -141,21 +142,21 @@ nhpp <- thinning(maxTime = 48, plotDelay = 0, intensityFcn = intensity,
 
 # thinning with simple custom intensity function and custom majorizing
 intensity <- function(t) {
-   if      (t < 12) t
-  else if (t < 24) 24 - t
-  else if (t < 36) t - 24
-  else             48 - t
+    if      (t < 12) t
+    else if (t < 24) 24 - t
+    else if (t < 36) t - 24
+    else             48 - t
 }
 majorizing <- data.frame(
-  x = c(0, 12, 24, 36, 48),
-  y = c(1, 13,  1, 13,  1))
+    x = c(0, 12, 24, 36, 48),
+    y = c(1, 13,  1, 13,  1))
 times <- thinning(plotDelay = 0, intensityFcn = intensity,
-  majorizingFcn = majorizing , majorizingFcnType = "pwl", maxTime = 48)
+    majorizingFcn = majorizing , majorizingFcnType = "pwl", maxTime = 48)
 }
 
 }
 \references{
 Lewis, P.A.W. and Shedler, G.S. (1979). Simulation of non-homogeneous Poisson
-   processes by thinning. _Naval Research Logistics_, **26**, 403–413.
+processes by thinning. \emph{Naval Research Logistics}, \strong{26}, 403–413.
 }
 \concept{non-homogeneous Poisson process}

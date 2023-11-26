@@ -31,8 +31,10 @@
 # @param populationColor Color used to display population
 # @param showTitle logical; if \code{TRUE} (default), displays a title in the 
 #        first of any displayed plots
-# @param respectLayout logical; if \code{TRUE} (default), respects existing 
+# @param respectLayout logical; if \code{FALSE} (default), respects existing 
 #        settings for device layout
+# @param restorePar logical; if \code{TRUE} (default), restores user's previous 
+#        par settings on function exit
 # @param getDensity  A density function for the distribution (i.e. \code{dunif} for uniform)
 #    \cr (REQUIRED w/ NO DEFAULTS)
 # @param getDistro   A distribution function for the distribution (i.e. \code{punif} for uniform)
@@ -80,9 +82,11 @@
 # @importFrom grDevices dev.hold dev.flush recordPlot replayPlot adjustcolor 
 # @importFrom stats quantile
 #
-# @template signature
 # @concept  random variate generation
 #
+# @template signature
+# @keywords internal
+# @noRd
 ################################################################################
 PlotContinuous <- function(u               = runif(1),
                            minPlotQuantile = 0.05,
@@ -98,6 +102,7 @@ PlotContinuous <- function(u               = runif(1),
                            populationColor = "grey",
                            showTitle       = TRUE,
                            respectLayout   = FALSE,
+                           restorePar      = TRUE,  # add 23 Nov 2023
                            getDensity,
                            getDistro,
                            getQuantile,
@@ -107,12 +112,18 @@ PlotContinuous <- function(u               = runif(1),
                            titleStr        = ""
                           )
 {
+    checkVal(restorePar, "l")  # add 23 Nov 2023
+    if (plot && restorePar) 
+    {
+        oldpar <- par(no.readonly = TRUE)  # save current par settings
+        on.exit(par(oldpar)) # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+    }
+
     #############################################################################
     # Run base parameter checking
     #############################################################################
-    warnVal <- options("warn")          # save current warning setting...
-    oldpar  <- par(no.readonly = TRUE)  # save current par settings
-    options(warn = -1)  # suppress warnings
+    #warnVal <- options("warn")        # save current warning setting... (del 22 Nov 2023)
+    #options(warn = -1)  # suppress warnings -- removing per CRAN req't (del 22 Nov 2023)
 
     checkVal(plot,     "l")
     checkVal(showCDF,  "l")
@@ -155,7 +166,7 @@ PlotContinuous <- function(u               = runif(1),
     checkVal(getDistro,   "f")
     checkVal(getQuantile, "f")
 
-    options(warn = 1)  # set to immediate warnings
+    #options(warn = 1)  # set to immediate warnings -- remove per CRAN (del 22 Nov 2023)
 
     #############################################################################
     # Initialize important variables
@@ -174,24 +185,50 @@ PlotContinuous <- function(u               = runif(1),
 
     # Global variables to be used in later functions
     xVals          <- NULL # Will store all inverse values of u
-    yThresh        <- NULL # Will store y threshhold for plotting
+    #yThresh        <- NULL # Will store y threshhold for plotting (del 23 Nov 2023)
     pdfYMax        <- NULL # Will store maximum Y for PDF plots
     currSub        <- NULL # Will store a subset of xVals for animation
-    xValsPlotted   <- NULL # Will store direct hash for x values plotted on
-    yValsPlotted   <- NULL
+    #xValsPlotted   <- NULL # Will store direct hash for x values plotted on (del 23 Nov 2023)
+    #yValsPlotted   <- NULL # (del 23 Nov 2023)
     yValsPlotMax   <- 1
-    uXLoc          <- NULL # Will Store location of points
+    #uXLoc          <- NULL # Will Store location of points  (del 23 Nov 2023)
     plot1          <- NULL # Will store state of CDF plot
     currSub        <- NULL # Will store growing subset of u to plot inversions
 
+    ################################################################################
+    # variables defined w/in scope of PlotContinuous that make "good use of 
+    # superassignment" for stateful function use (mod 23 Nov 2023)
+    # (https://stat.ethz.ch/pipermail/r-help/2011-April/275905.html)
+    # (https://adv-r.hadley.nz/function-factories.html#stateful-funs)
+    #
     histInfo       <- NULL # Will store histogram info for plotting on CDF/PDF
     maxStackHeight <- NULL # Histogram data for highest bar
     maxHistDensity <- NULL # Histogram data for max density
 
+    # keep track of the row we are plotting in, since the user can specify any
+    # mix of CDF/PDF/ECDF
+    plottingRow    <- 1    # should be restricted to {1,2,3}
+
+    uXLoc          <- NULL # will store location of points
+    xValsPlotted   <- NULL # will store direct hash for x values plotted on
+    yValsPlotted   <- NULL
+
+    yThresh        <- NULL # will store y threshhold for plotting
+
+    emptyCDFPlot   <- NULL # will have the plot area @ top with only CDF curve
+    prevCDFPlot    <- NULL # will have CDF curve with previous inversions
+    prevCDFPlotCnt <- 0    # this counter will allow us to know when we need
+                           # to draw inversions as we near the end of a jump,
+                           # to allow the user to walk backwards from the jump
+
+    # (add 23 Nov 2023)
+    pauseData      <- NULL # list used in step-by-step progress through viz
+    ################################################################################
+
     # Return inverted values function
     ReturnVals <- function(xVals) {
-      options(warn = warnVal$warn)
-      par(oldpar)
+      #options(warn = warnVal$warn)  # removing per CRAN req't (del 22 Nov 2023)
+      #par(oldpar)                   # use on.exit above per CRAN (del 22 Nov 2023)
       if (is.null(xVals))  return(invisible(xVals))  else  return(xVals)
     }
 
@@ -210,7 +247,7 @@ PlotContinuous <- function(u               = runif(1),
       # if subset empty don't plot any variates; only PDF and/or CDF
       if (is.null(xSubset)) { maxHistDensity <<- 0; return() }
 
-      options(warn = -1)  # suppress warnings
+      # options(warn = -1)  # suppress warnings -- removing per CRAN req't (del 22 Nov 2023)
 
       maxBins  <- 500
       histInfo <<- NULL
@@ -261,16 +298,16 @@ PlotContinuous <- function(u               = runif(1),
       if (is.null(histInfo)) {
         histInfo <<- tryCatch(
           hist(xSubset, breaks = "sturges", plot = FALSE), error = function(err) {
-            print(err); stop('inorm: Error internally using hist()') })}
+            warning(err); stop('inorm: Error internally using hist()') })}
 
       if (length(histInfo$breaks) > maxBins)
         stop(paste('inorm: Error using hist() -- more than', maxBins, 'bins'))
 
       maxHistDensity <<- max(histInfo$density)
 
-      options(warn = 1)  # reset to our inorm state: immediate warnings
+      # options(warn = 1)  # reset to our inorm state: immediate warnings (del 22 Nov 2023)
 
-    }
+    }  # end MakeHist
 
     #############################################################################
 
@@ -285,7 +322,10 @@ PlotContinuous <- function(u               = runif(1),
       # this corresponds to just showing the pdf and/or cdf distribution without
       # any inversion
       if (plot == FALSE) {
-        warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)")
+        # mod 23 Nov 2023
+        #warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)")
+        warning("ignoring plot = FALSE since u is NULL, indicating distribution plot(s)",
+                immediate. = TRUE)
         plot <- TRUE
       }
       # recall function defaults: showPDF = TRUE, showCDF = TRUE, showECDF = TRUE
@@ -317,14 +357,21 @@ PlotContinuous <- function(u               = runif(1),
     if (plot == FALSE)  return(ReturnVals(xVals))
 
     if (showCDF == FALSE && showPDF == FALSE && showECDF == FALSE) {
-      if (plot == TRUE)
-        warning("ignoring plot since showCDF, showPDF, and showECDF are all FALSE")
+      if (plot == TRUE) {
+        # mod 23 Nov 2023
+        #warning("ignoring plot since showCDF, showPDF, and showECDF are all FALSE")
+        warning("ignoring plot since showCDF, showPDF, and showECDF are all FALSE",
+                immediate. = TRUE)
+      }
       return(ReturnVals(xVals))
     }
 
     if (round(fromX, digits = 7) == round(toX, digits = 7)) {
+      # mod 23 Nov 2023
       warning(paste("politely declining to plot:",
-                    "essentially equal min/max quantile values"))
+                    "essentially equal min/max quantile values"),
+                    immediate. = TRUE)
+      #              "essentially equal min/max quantile values"))
       return(ReturnVals(xVals))
     }
 
@@ -343,20 +390,23 @@ PlotContinuous <- function(u               = runif(1),
     userPlots <- prod(par("mfrow"))
     if (respectLayout) {
       if (userPlots < numPlotsToShow)
+        # mod 23 Nov 2023
         warning(paste(
           'Cannot display the requested ', numPlotsToShow,
           ' plots simultaneously because layout is set for ', userPlots,
           ' plot', if (userPlots > 1) 's. ' else '. ',
           'Please use \'par\' to set layout appropriately, e.g., ',
           'par(mfrow = c(', numPlotsToShow, ', 1)) or ',
-          'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""))
+          'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""),
+          immediate. = TRUE)
+          # 'par(mfcol = c(1, ', numPlotsToShow, ')).', sep = ""))
     } else {
         par(mfrow = c(numPlotsToShow, 1))
     }
 
     # keep track of the row we are plotting in, since the user can specify any
     # mix of CDF/PDF/ECDF
-    plottingRow <- 1  # should be restricted to {1,2,3}
+    #plottingRow <- 1  # should be restricted to {1,2,3}  # (del 23 Nov 2023)
 
     # set default margins for plots
     botMar <- if (numPlotsToShow > 1) 4.1 else 5.1
@@ -418,7 +468,7 @@ PlotContinuous <- function(u               = runif(1),
 
       # display the title if this is the topmost plost
       if (plottingRow == 1 && showTitle) {
-        # if using bquote (i.e., languate), put a smidge higher
+        # if using bquote (i.e., language), put a smidge higher
         if (typeof(titleStr) == "language")
             title(titleStr, line = 1.25, cex.main = 0.975)
         else
@@ -767,7 +817,12 @@ PlotContinuous <- function(u               = runif(1),
             sym$arrow, "  x = ", format(round(xVals[i], 3), nsmall = 3))
     }
 
-    pauseData <<- SetPausePlot(
+    # changing <<- to <- per CRAN req't (23 Nov 2023)
+    # pauseData now defined in local scope of PlotContinuous, as with other
+    # internal-to-function variables
+    #
+    #pauseData <<- SetPausePlot(  # (del 23 Nov 2023)
+    pauseData <- SetPausePlot(
         plotDelay      = plotDelay, 
         prompt         = "Hit 'ENTER' to proceed, 'q' to quit, or 'h' for help/more options: ",
         viewCommand    = c("latest"),
@@ -886,11 +941,13 @@ PlotContinuous <- function(u               = runif(1),
         invisible(return())
     }
 
-    emptyCDFPlot   <- NULL  # will have the plot area @ top with only CDF curve
-    prevCDFPlot    <- NULL  # will have CDF curve with previous inversions
-    prevCDFPlotCnt <- 0     # this counter will allow us to know when we need
-                            # to draw inversions as we near the end of a jump,
-                            # to allow the user to walk backwards from the jump
+    # following assignments moved above RE CRAN concern of using <<- for global
+    # (del 23 Nov 2023)
+    #emptyCDFPlot   <- NULL  # will have the plot area @ top with only CDF curve
+    #prevCDFPlot    <- NULL  # will have CDF curve with previous inversions
+    #prevCDFPlotCnt <- 0     # this counter will allow us to know when we need
+    #                        # to draw inversions as we near the end of a jump,
+    #                        # to allow the user to walk backwards from the jump
 
     # NB: we choose to allow plotDelay == 0 to enter the loop so that
     # compPlot.R:PausePlot can display a progress bar

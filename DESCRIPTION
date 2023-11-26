@@ -1,10 +1,10 @@
 Package: simEd
-Version: 2.0.0
 Title: Simulation Education
+Version: 2.0.1
 Authors@R: c(
-  person("Barry", "Lawson", email = "blawson@richmond.edu", role = c("aut","cre")),
+  person("Barry", "Lawson", email = "blawson@bates.edu", role = c("aut","cre","cph")),
   person("Larry", "Leemis", email = "leemis@math.wm.edu", role = "aut"),
-  person("Vadim", "Kudlay", email = "vadim.kudlay@richmond.edu", role = "aut"))
+  person("Vadim", "Kudlay", email = "vkudlay@nvidia.com", role = "aut"))
 Imports: graphics, grDevices, methods, stats, utils, shape
 Depends: rstream
 Suggests: magick
@@ -18,16 +18,19 @@ Description: Contains various functions to be used for simulation education,
     random number generator; variate generation via acceptance-rejection; and
     of generating a non-homogeneous Poisson process via thinning.  Also
     contains two queueing data sets (one fabricated, one real-world) to
-    facilitate input modeling.
-License: GPL (>= 2)
+    facilitate input modeling.  More details on the use of these functions can
+    be found in Lawson and Leemis (2015) <doi:10.1109/WSC.2017.8248124>, in
+    Kudlay, Lawson, and Leemis (2020) <doi:10.1109/WSC48552.2020.9384010>, and
+    in Lawson and Leemis (2021) <doi:10.1109/WSC52266.2021.9715299>.
+License: MIT + file LICENSE
 LazyData: true
-RoxygenNote: 7.1.1
 Encoding: UTF-8
+RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2021-01-27 23:36:15 UTC; blawson
-Author: Barry Lawson [aut, cre],
+Packaged: 2023-11-26 13:08:36 UTC; blawson
+Author: Barry Lawson [aut, cre, cph],
   Larry Leemis [aut],
   Vadim Kudlay [aut]
-Maintainer: Barry Lawson <blawson@richmond.edu>
+Maintainer: Barry Lawson <blawson@bates.edu>
 Repository: CRAN
-Date/Publication: 2021-01-28 15:10:02 UTC
+Date/Publication: 2023-11-26 23:20:13 UTC

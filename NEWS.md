@@ -1,3 +1,13 @@
+# simEd 2.0.1
+
+* Updated author email addresses to current affiliations.
+* Removed `show` parameter from `msq` and `ssq` because of inconsistency with
+  meaning/values of `show` parameter in other functions.  Ability to select
+  components to display is still available through other existing parameters.
+* Added `restorePar` parameter to all i* functions to allow the user to request
+  that prior par values not be restored on function exit, permitting multiple 
+  visualizations per plot (e.g., 3x3) and/or drawing overlays on visualization.
+
 # simEd 2.0.0
 
 * Added `ssqvis` to illustrate and animate the details of an event-driven

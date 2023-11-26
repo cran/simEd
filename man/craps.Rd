@@ -21,24 +21,24 @@ Point estimate of the probability of winning at craps (a real-valued scalar).
 }
 \description{
 A Monte Carlo simulation of the dice game "craps".
- Returns a point estimate of the probability of winning craps using fair dice.
+Returns a point estimate of the probability of winning craps using fair dice.
 }
 \details{
 Implements a Monte Carlo simulation of the dice game craps played with fair
-  dice.
-  A single play of the game proceeds as follows:
-    \itemize{
-      \item Two fair dice are rolled.  If the sum is 7 or 11, the player wins
-      immediately; if the sum is 2, 3, or 12, the player loses immediately.
-      Otherwise the sum becomes the \emph{point}.
-      \item The two dice continue to be rolled until either a sum of 7 is rolled
-      (in which case the player loses) or a sum equal to the \emph{point} is
-      rolled (in which case the player wins).
-    }
-  The simulation involves \code{nrep} replications of the game.
+dice.
+A single play of the game proceeds as follows:
+\itemize{
+\item Two fair dice are rolled.  If the sum is 7 or 11, the player wins
+immediately; if the sum is 2, 3, or 12, the player loses immediately.
+Otherwise the sum becomes the \emph{point}.
+\item The two dice continue to be rolled until either a sum of 7 is rolled
+(in which case the player loses) or a sum equal to the \emph{point} is
+rolled (in which case the player wins).
+}
+The simulation involves \code{nrep} replications of the game.
 
-  Note: When the value of \code{nrep} is large, the function will execute
-  noticeably faster when \code{showProgress} is set to \code{FALSE}.
+Note: When the value of \code{nrep} is large, the function will execute
+noticeably faster when \code{showProgress} is set to \code{FALSE}.
 }
 \examples{
  # set the initial seed externally using set.seed;
@@ -54,16 +54,16 @@ Implements a Monte Carlo simulation of the dice game craps played with fair
  prob <- craps(10000)
 
  # explicitly set nrep = 10000 and seed = 8675309
- probs <- craps(10000, 8675309)
+ prob <- craps(10000, 8675309)
 
 }
 \seealso{
 \code{\link[base:set.seed]{base::set.seed}}
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{random variate generation}
 \keyword{misc}

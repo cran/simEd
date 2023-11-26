@@ -35,7 +35,7 @@ simcolors <- list(
 #'    queue reaching capacity. This will be plotted in the rejection pathway.
 #' @param nextToEnter  Number of the next job that will enter the queue.
 #' @param newServed    Number of a job that just finished being serviced.
-#' @param currProgress Number quantifying current progress of simulation in [0,1]
+#' @param currProgress Number quantifying current progress of simulation in \[0,1\]
 #' @param numRejects   Number of jobs rejected from queue so far
 #' @param svctime      Current service time of job in service
 #' @param iartime      Current interarrival time of next job to enter
@@ -49,6 +49,7 @@ simcolors <- list(
 #' @template signature
 #' 
 #' @importFrom shape Arrows roundrect 
+#' @noRd
 ################################################################################
 defaultPlotSSQ <- function(
   time, currSystem, newDropped = 0, nextToEnter = 0, newServed = 0,
@@ -215,7 +216,7 @@ defaultPlotSSQ <- function(
 #'    queue reaching capacity. This will be plotted in the rejection pathway.
 #' @param nextToEnter  Number of the next job that will enter the queue.
 #' @param newServed    Number of a job that just finished being serviced.
-#' @param currProgress Number quantifying current progress of simulation in [0,1]
+#' @param currProgress Number quantifying current progress of simulation in \[0,1\]
 #' @param numRejects   Number of jobs rejected from queue so far
 #' @param serversCal   Calendar of all the services as defined in MSQ. Contains
 #'     at least names 'job', 'time', and 'state' for each server
@@ -229,6 +230,7 @@ defaultPlotSSQ <- function(
 #' @template signature
 #' 
 #' @importFrom shape Arrows roundrect 
+#' @noRd
 ################################################################################
 defaultPlotMSQ <- function(
   time, currSystem, newDropped = 0, nextToEnter = 0,
@@ -422,6 +424,7 @@ defaultPlotMSQ <- function(
 #' @template signature
 #' 
 #' @importFrom graphics legend
+#' @noRd
 ################################################################################
 defaultPlotSkyline <- function(times,
                                numsInSys,

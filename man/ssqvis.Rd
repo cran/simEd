@@ -43,8 +43,8 @@ constant value 1.  Default is "M".}
 
 \item{serviceType}{string representation of desired service process .
 Options are "M" -- exponential with rate 10/9;
-"G" -- uniform(0, 1.8), having mean 9/10; and "D" -- 
- deterministic with constant value 9/10.  Default is "M".}
+"G" -- uniform(0, 1.8), having mean 9/10; and "D" --
+deterministic with constant value 9/10.  Default is "M".}
 
 \item{maxTime}{maximum time to simulate}
 
@@ -52,7 +52,7 @@ Options are "M" -- exponential with rate 10/9;
 
 \item{maxEventsPerSkyline}{maximum number of events viewable at a time in the skyline plot.
 A large value for this parameter may result in plotting delays.
-This parameter does not impact the final plotting, which will show all 
+This parameter does not impact the final plotting, which will show all
 end-of-simulation results.}
 
 \item{saveAllStats}{if \code{TRUE}, returns all vectors of statistics (see below)
@@ -83,117 +83,117 @@ parameter below; otherwise, supersedes individual showSkyline...
 parameter values.
 If \code{TRUE}, displays full skyline plot; \code{FALSE} suppresses
 skyline plot. Can alternatively be specified using chmod-like octal
-component specification: use 1, 2, 4 for system, queue, and server 
+component specification: use 1, 2, 4 for system, queue, and server
 respectively, summing to indicate desired combination (e.g., 7 for all).
 Can also be specified as a binary vector (e.g., c(1,1,1) for all).}
 
-\item{showSkylineQueue}{logical; if \code{TRUE}, includes number in queue 
+\item{showSkylineQueue}{logical; if \code{TRUE}, includes number in queue
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
-\item{showSkylineSystem}{logical; if \code{TRUE}, includes number in system 
+\item{showSkylineSystem}{logical; if \code{TRUE}, includes number in system
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
-\item{showSkylineServer}{logical; if \code{TRUE}, includes number in server 
+\item{showSkylineServer}{logical; if \code{TRUE}, includes number in server
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
 \item{showTitle}{if \code{TRUE}, display title at the top of the main plot}
 
 \item{jobImage}{a vector of URLs/local addresses of images to use as jobs. Requires
-package \code{'Magick'}.}
+package \code{'magick'}.}
 
-\item{plotDelay}{a positive numeric value indicating seconds between plots. 
-A value of -1 enters 'interactive' mode, where the state will pause 
+\item{plotDelay}{a positive numeric value indicating seconds between plots.
+A value of -1 enters 'interactive' mode, where the state will pause
 for user input at each step.  A value of 0 will display only the final
 end-of-simulation plot.}
 }
 \value{
 The function returns a list containing:
-   \itemize{
-     \item the number of arrivals to the system (\code{customerArrivals}),
-     \item the number of customers processed (\code{customerDepartures}),
-     \item the ending time of the simulation (\code{simulationEndTime}),
-     \item average wait time in the queue (\code{avgWait}),
-     \item average time in the system (\code{avgSojourn}),
-     \item average number in the system (\code{avgNumInSystem}),
-     \item average number in the queue (\code{avgNumInQueue}), and
-     \item server utilization (\code{utilization}).
-   }
-   of the queue as computed by the simulation.
-   When requested via the ``save...'' parameters, the list may also contain:
-   \itemize{
-     \item a vector of interarrival times (\code{interarrivalTimes}),
-     \item a vector of wait times (\code{waitTimes}),
-     \item a vector of service times (\code{serviceTimes}),
-     \item a vector of sojourn times (\code{sojournTimes}),
-     \item two vectors (time and count) noting changes to number in the system
-          (\code{numInSystemT}, \code{numInSystemN}),
-     \item two vectors (time and count) noting changes to number in the queue
-          (\code{numInQueueT}, \code{numInQueueN}), and
-     \item two vectors (time and status) noting changes to server status
-          (\code{serverStatusT}, \code{serverStatusN}).
-   }
+\itemize{
+\item the number of arrivals to the system (\code{customerArrivals}),
+\item the number of customers processed (\code{customerDepartures}),
+\item the ending time of the simulation (\code{simulationEndTime}),
+\item average wait time in the queue (\code{avgWait}),
+\item average time in the system (\code{avgSojourn}),
+\item average number in the system (\code{avgNumInSystem}),
+\item average number in the queue (\code{avgNumInQueue}), and
+\item server utilization (\code{utilization}).
+}
+of the queue as computed by the simulation.
+When requested via the ``save...'' parameters, the list may also contain:
+\itemize{
+\item a vector of interarrival times (\code{interarrivalTimes}),
+\item a vector of wait times (\code{waitTimes}),
+\item a vector of service times (\code{serviceTimes}),
+\item a vector of sojourn times (\code{sojournTimes}),
+\item two vectors (time and count) noting changes to number in the system
+(\code{numInSystemT}, \code{numInSystemN}),
+\item two vectors (time and count) noting changes to number in the queue
+(\code{numInQueueT}, \code{numInQueueN}), and
+\item two vectors (time and status) noting changes to server status
+(\code{serverStatusT}, \code{serverStatusN}).
+}
 }
 \description{
 A modified ssq implementation that illustrates event-driven
 details, including the event calendar, inversion for interarrival and service
-time variate generation, the simulation clock, the status of the queueing 
+time variate generation, the simulation clock, the status of the queueing
 system, and statistics collection. The function plots step-by-step in either
 an interactive mode or time-delayed automatic mode.
 }
 \details{
-Animates the details of an event-driven implementation of a single-server 
+Animates the details of an event-driven implementation of a single-server
 queue simulation.
 
-The event calendar, inversion for interarrival and service time variates, 
-and an abbreviated (current) timeline are animated in the top pane of the 
-window.  In this pane, blue corresponds to the arrival process, orange 
-corresponds to the service process, and purple corresponds to uniform 
+The event calendar, inversion for interarrival and service time variates,
+and an abbreviated (current) timeline are animated in the top pane of the
+window.  In this pane, blue corresponds to the arrival process, orange
+corresponds to the service process, and purple corresponds to uniform
 variates used in inversion.  Yellow is used to highlight recent updates.
 
-The state of the queueing system is animated in the middle pane of the 
+The state of the queueing system is animated in the middle pane of the
 window.  In this pane, red indicates an idle server, orange indicates that
-a new customer has just arrived to the server and a corresponding service 
-time is being generated, and green indicates a busy server.  By default, 
-customers are depicted as black rectangles and identified by increasing 
-arrival number, but this depiction can be overridden by the \code{jobImage} 
+a new customer has just arrived to the server and a corresponding service
+time is being generated, and green indicates a busy server.  By default,
+customers are depicted as black rectangles and identified by increasing
+arrival number, but this depiction can be overridden by the \code{jobImage}
 parameter.
 
-Statistics are displayed in the bottom pane of the window.  Time-persistent 
-statistics are shown as "skyline functions" in the left portion of this 
-pane.  Both time-persistent and based-on-observation statistics are shown 
-in respective tables in the right portion of this pane. In the tables, 
+Statistics are displayed in the bottom pane of the window.  Time-persistent
+statistics are shown as "skyline functions" in the left portion of this
+pane.  Both time-persistent and based-on-observation statistics are shown
+in respective tables in the right portion of this pane. In the tables,
 yellow is used to highlight recent updates.
 
 The \code{seed} parameter can take one of three valid
-   argument types:
-   \itemize{
-     \item \code{NA} (default), which will use the current state of the random
-          number generator without explicitly setting a new seed (see examples);
-     \item a positive integer, which will be used as the initial seed passed in
-          an explicit call to \code{\link{set.seed}}; or
-     \item \code{NULL}, which will be passed in an explicit call to to
-         \code{\link{set.seed}}, thereby setting the initial seed using the
-         system clock.
-  }
+argument types:
+\itemize{
+\item \code{NA} (default), which will use the current state of the random
+number generator without explicitly setting a new seed (see examples);
+\item a positive integer, which will be used as the initial seed passed in
+an explicit call to \code{\link{set.seed}}; or
+\item \code{NULL}, which will be passed in an explicit call to to
+\code{\link{set.seed}}, thereby setting the initial seed using the
+system clock.
+}
 }
 \examples{
 
  # Visualizing ssq with a set seed, infinite queue capacity, 4 arrivals,
  # and showing skyline with number in system, queue, and server.
- ssqvis(seed = 1234, maxArrivals = 4, showSkyline = 7, plotDelay = 0.001)
+ ssqvis(seed = 1234, maxArrivals = 4, showSkyline = 7, plotDelay = 0.01)
 
 }
 \seealso{
 \code{\link{rstream}}, \code{\link{set.seed}},
-         \code{\link[=runif]{stats::runif}}
+\code{\link[=runif]{stats::runif}}
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{queueing}
 \keyword{utilities}

@@ -36,6 +36,11 @@ DrawBorder <- function(br, col = rgb(0,0,0,0),
 ###############################################################################
 ResetPlot <- function() {
   # Initialize a new plotting window overlaying the current one
+  # NB: 22 Nov 2023
+  #    RE CRAN suggestion to use on.exit() for par, note that this function
+  #    is called from within accrej, lehmer, ssq, ssqvis, & thinning functions,
+  #    which each have logic at their start w/ on.exit() for par, so no need
+  #    here.
   par(mfrow = c(1,1), new = FALSE)
   # dev.off(); dev.new()          # Alternative 
   NewPlot()
@@ -50,6 +55,11 @@ ResetPlot <- function() {
 ###############################################################################
 ScalePlots <- function(dims, mfrow = c(2, 3)) {
   # Setting mfrow here scales all subplots as if to fit 3,2 plot
+  # NB: 22 Nov 2023
+  #    RE CRAN suggestion to use on.exit() for par, note that this function
+  #    is called from within accrej, compPlot (below -- not user facing), 
+  #    lehmer, ssqvis, and thinning functions, which each have logic at their
+  #    start w/ on.exit() for par, so no need here.
   par(fig = dims/200, mfrow = mfrow, mar = c(0,0,0,0), new = TRUE)
   NewPlot()
 }
@@ -199,8 +209,12 @@ DrawPoint <- function(x, y, col, cex = 1.5, bg = "black")
   ly <- length(y)
 
   if (lx * ly > 1) {
-    if (lx != ly && min(lx, ly) > 1)
-      warning(paste("DrawPoint() called with |x| ==", lx, "and |y| ==", ly))
+    if (lx != ly && min(lx, ly) > 1) {
+      # mod 23 Nov 2023
+      #warning(paste("DrawPoint() called with |x| ==", lx, "and |y| ==", ly))
+      warning(paste("DrawPoint() called with |x| ==", lx, "and |y| ==", ly),
+              immediate. = TRUE)
+    }
     else for (i in 1:max(lx, ly))
       DrawPoint(
         x   = x[min(lx, i)],
@@ -257,9 +271,12 @@ SetPausePlot <- function(plotDelay      = -1,
                            length(viewInstruct), 
                            length(viewFunction)))))
   {
+    # mod 23 Nov 2023
     warning(paste("view parameters (viewCommand, viewNumArgs, viewInstruct, and",
       "viewFunction) are not of the same length. Each element of one should",
-      "correspond to the same-indexed element of the others"))
+      "correspond to the same-indexed element of the others"),
+      immediate. = TRUE)
+      #"correspond to the same-indexed element of the others"))
 #^(1)
   }
 
@@ -509,7 +526,7 @@ PausePlot <- function(pauseData,
             pauseData$numJumpSteps    <- NA
             pauseData$stepsUntilFlush <- NA
             utils::setTxtProgressBar(pauseData$progressBar, 1.0)
-            cat("\n")  # don't want to close the bar, but need a newline
+            message()  # don't want to close the bar, but need a newline
             utils::flush.console()
             pauseData$jumpComplete <- FALSE
             pauseData$menuChoice <- ":)"  # useless emoticon fun
@@ -603,7 +620,9 @@ PlotTimer <- function(
 
   if (showPlot) {
     
-    op <- par(no.readonly = TRUE)
+    # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
 
     timerPlotBorderRange <- plotRange + borderDisp
     
@@ -614,11 +633,11 @@ PlotTimer <- function(
     TogglePlot(plotRange, initPlot = FALSE, mar = c(1,1,1,1))
   
     plot(times, bty = "n", las = 1, type = "s")
-    par(op)
+    #par(op)  # using on.ext above (del 22 Nov 2023)
     
   }
 
-  if (print) cat("\r", "Time = ", times[length(times)])
+  if (print) message("Time = ", times[length(times)])
 
   # Either set last element to current time (start timer) or 0 (record stopped timer)
   times <- c(times, if(start) Sys.time() else 0)

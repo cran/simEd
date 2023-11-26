@@ -22,6 +22,7 @@ ifd(
   populationColor = "grey",
   showTitle = TRUE,
   respectLayout = FALSE,
+  restorePar = TRUE,
   ...
 )
 }
@@ -42,19 +43,19 @@ figures only}
 \item{plot}{logical; if \code{TRUE} (default), one or more plots will appear
 (see parameters below); otherwise no plots appear}
 
-\item{showCDF}{logical; if \code{TRUE} (default), cdf plot appears, otherwise cdf 
+\item{showCDF}{logical; if \code{TRUE} (default), cdf plot appears, otherwise cdf
 plot is suppressed}
 
-\item{showPDF}{logical; if \code{TRUE} (default), PDF plot 
+\item{showPDF}{logical; if \code{TRUE} (default), PDF plot
 appears, otherwise PDF plot is suppressed}
 
 \item{showECDF}{logical; if \code{TRUE} (default), ecdf plot appears,
 otherwise ecdf plot is suppressed}
 
-\item{show}{octal number (0-7) indicating plots to display;  4: CDF, 2: PDF, 
+\item{show}{octal number (0-7) indicating plots to display;  4: CDF, 2: PDF,
 1: ECDF; sum for desired combination}
 
-\item{maxInvPlotted}{number of inversions to plot across CDF before switching to 
+\item{maxInvPlotted}{number of inversions to plot across CDF before switching to
 plotting quantiles only}
 
 \item{plotDelay}{delay in seconds between CDF plots}
@@ -63,11 +64,14 @@ plotting quantiles only}
 
 \item{populationColor}{Color used to display population}
 
-\item{showTitle}{logical; if \code{TRUE} (default), displays a title in the 
+\item{showTitle}{logical; if \code{TRUE} (default), displays a title in the
 first of any displayed plots}
 
-\item{respectLayout}{logical; if \code{TRUE} (default), respects existing 
+\item{respectLayout}{logical; if \code{TRUE} (default), respects existing
 settings for device layout}
+
+\item{restorePar}{logical; if \code{TRUE} (default), restores user's previous
+par settings on function exit}
 
 \item{...}{Possible additional arguments. Currently, additional arguments not considered.}
 }
@@ -76,107 +80,107 @@ A vector of FALSE random variates
 }
 \description{
 Generates random variates from the FALSE distribution by inversion.
- Optionally graphs the population cumulative distribution function and
- associated random variates, the population probability density
- function and a histogram of the random variates, and the empirical
- cumulative distribution function versus the population cumulative
- distribution function.
+Optionally graphs the population cumulative distribution function and
+associated random variates, the population probability density
+function and a histogram of the random variates, and the empirical
+cumulative distribution function versus the population cumulative
+distribution function.
 }
 \details{
 Generates random variates from the FALSE distribution, and optionally,
- illustrates
- \itemize{
-   \item the use of the inverse-CDF technique,
-   \item the effect of random sampling variability in relation to the PDF and CDF.
- }
- When all of the graphics are requested,
- \itemize{
-   \item the first graph illustrates the use of the inverse-CDF technique by
-       graphing the population CDF and the transformation of the random numbers
-       to random variates,
-   \item the second graph illustrates the effect of random sampling variability
-       by graphing the population PDF and the histogram associated with the
-       random variates, and
-   \item the third graph illustrates effect of random sampling variability by
-       graphing the population CDF and the empirical CDF associated with the
-       random variates.
- }
- All aspects of the random variate generation algorithm are output in red by
- default, which can be changed by specifying \code{sampleColor}.
- All aspects of the population distribution are output in gray by default,
- which can be changed by specifying \code{populationColor}.
+illustrates
+\itemize{
+\item the use of the inverse-CDF technique,
+\item the effect of random sampling variability in relation to the PDF and CDF.
+}
+When all of the graphics are requested,
+\itemize{
+\item the first graph illustrates the use of the inverse-CDF technique by
+graphing the population CDF and the transformation of the random numbers
+to random variates,
+\item the second graph illustrates the effect of random sampling variability
+by graphing the population PDF and the histogram associated with the
+random variates, and
+\item the third graph illustrates effect of random sampling variability by
+graphing the population CDF and the empirical CDF associated with the
+random variates.
+}
+All aspects of the random variate generation algorithm are output in red by
+default, which can be changed by specifying \code{sampleColor}.
+All aspects of the population distribution are output in gray by default,
+which can be changed by specifying \code{populationColor}.
 
 The F distribution with \code{df1} \eqn{= n_1}{= n1} and \code{df2}
-   \eqn{= n_2}{= n2} degrees of freedom has density
+\eqn{= n_2}{= n2} degrees of freedom has density
 
-   \deqn{f(x) = \frac {\Gamma(n_1/2 + n_2/2)} {\Gamma(n_1/2) \ \Gamma(n_2/2)}
+\deqn{f(x) = \frac {\Gamma(n_1/2 + n_2/2)} {\Gamma(n_1/2) \ \Gamma(n_2/2)}
                 \left( \frac{n_1}{n_2} \right)^{n_1/2} x^{n_1/2 - 1}
                 \left( 1 + \frac{n_1x}{n_2} \right) ^ {-(n_1 + n_2)/2}}{%
          f(x) = Gamma((n1 + n2)/2) / (Gamma(n1/2) Gamma(n2/2)) (n1/n2)^(n1/2)
                 x^(n1/2 - 1) (1 + (n1/n2) x)^-(n1 + n2)/2}
 
-   for \eqn{x > 0}.
+for \eqn{x > 0}.
 
 The algorithm for generating random variates from the FALSE distribution is
-  synchronized (one random variate for each random number) and monotone in u.
-  This means that the variates generated here might be useful in some variance
-  reduction techniques used in Monte Carlo and discrete-event simulation.
+synchronized (one random variate for each random number) and monotone in u.
+This means that the variates generated here might be useful in some variance
+reduction techniques used in Monte Carlo and discrete-event simulation.
 
-  Values from the u vector are plotted in the cdf plot along the vertical axis
-  as colored dots.  A horizontal, dashed, colored line extends from the dot to
-  the population cdf.  At the intersection, a vertical, dashed colored line
-  extends downward to the horizontal axis, where a second colored dot, denoting
-  the associated FALSE random variate is plotted.
+Values from the u vector are plotted in the cdf plot along the vertical axis
+as colored dots.  A horizontal, dashed, colored line extends from the dot to
+the population cdf.  At the intersection, a vertical, dashed colored line
+extends downward to the horizontal axis, where a second colored dot, denoting
+the associated FALSE random variate is plotted.
 
-  This is not a particularly fast variate generation algorithm because it uses
-  the base R \code{qf} function to invert the values contained in \code{u}.
+This is not a particularly fast variate generation algorithm because it uses
+the base R \code{qf} function to invert the values contained in \code{u}.
 
-  All of the elements of the \code{u} vector must be between 0 and 1.
-  Alternatively, \code{u} can be \code{NULL} in which case plot(s) of the
-  theoretical PDF and cdf are displayed according to plotting parameter
-  values (defaulting to display of both the PDF and cdf).
+All of the elements of the \code{u} vector must be between 0 and 1.
+Alternatively, \code{u} can be \code{NULL} in which case plot(s) of the
+theoretical PDF and cdf are displayed according to plotting parameter
+values (defaulting to display of both the PDF and cdf).
 
-  The \code{show} parameter can be used as a shortcut way to denote plots to
-  display.  The argument to \code{show} can be either:
-  \itemize{
-    \item a binary vector of length three, where the entries from left to right
-        correspond to \code{showCDF}, \code{showPDF}, and \code{showECDF},
-        respectively.  For each entry, a 1 indicates the plot should be
-        displayed, and a 0 indicates the plot should be suppressed.
-    \item an integer in [0,7] interpreted similar to the Unix chmod command.  That
-        is, the integer's binary representation can be transformed into a
-        length-three vector discussed above (e.g., 6 corresponds to c(1,1,0)).
-        See examples.
-  }
-  Any valid value for \code{show} takes precedence over existing individual
-  values for \code{showCDF}, \code{showPDF}, and \code{showECDF}.
+The \code{show} parameter can be used as a shortcut way to denote plots to
+display.  The argument to \code{show} can be either:
+\itemize{
+\item a binary vector of length three, where the entries from left to right
+correspond to \code{showCDF}, \code{showPDF}, and \code{showECDF},
+respectively.  For each entry, a 1 indicates the plot should be
+displayed, and a 0 indicates the plot should be suppressed.
+\item an integer in [0,7] interpreted similar to the Unix chmod command.  That
+is, the integer's binary representation can be transformed into a
+length-three vector discussed above (e.g., 6 corresponds to c(1,1,0)).
+See examples.
+}
+Any valid value for \code{show} takes precedence over existing individual
+values for \code{showCDF}, \code{showPDF}, and \code{showECDF}.
 
-  If \code{respectLayout} is \code{TRUE}, the function respects existing
-  settings for device layout.  Note, however, that if the number of plots
-  requested (either via \code{show} or via \code{showCDF}, \code{showPMF}, and
-  \code{showECDF}) exceeds the number of plots available in the current layout
-  (as determined by \code{prod(par("mfrow"))}), the function will display all
-  requested plots but will also display a warning message indicating that the
-  current layout does not permit simultaneous viewing of all requested plots.
-  The most recent plot with this attribute can be further annotated after the call.
+If \code{respectLayout} is \code{TRUE}, the function respects existing
+settings for device layout.  Note, however, that if the number of plots
+requested (either via \code{show} or via \code{showCDF}, \code{showPMF}, and
+\code{showECDF}) exceeds the number of plots available in the current layout
+(as determined by \code{prod(par("mfrow"))}), the function will display all
+requested plots but will also display a warning message indicating that the
+current layout does not permit simultaneous viewing of all requested plots.
+The most recent plot with this attribute can be further annotated after the call.
 
-  If \code{respectLayout} is \code{FALSE}, any existing user settings for device
-  layout are ignored.  That is, the function uses \code{par} to explicitly set
-  \code{mfrow} sufficient to show all requested plots stacked vertically to
-  align their horizontal axes, and then resets row, column, and margin settings
-  to their prior state on exit.
+If \code{respectLayout} is \code{FALSE}, any existing user settings for device
+layout are ignored.  That is, the function uses \code{par} to explicitly set
+\code{mfrow} sufficient to show all requested plots stacked vertically to
+align their horizontal axes, and then resets row, column, and margin settings
+to their prior state on exit.
 
-  The \code{minPlotQuantile} and \code{maxPlotQuantile} arguments are present in
-  order to compress the plots horizontally.   The random variates generated are
-  not impacted by these two arguments.  Vertical, dotted, black lines are
-  plotted at the associated quantiles on the plots.
+The \code{minPlotQuantile} and \code{maxPlotQuantile} arguments are present in
+order to compress the plots horizontally.   The random variates generated are
+not impacted by these two arguments.  Vertical, dotted, black lines are
+plotted at the associated quantiles on the plots.
 
-  \code{plotDelay} can be used to slow down or halt the variate generation for
-  classroom explanation.
+\code{plotDelay} can be used to slow down or halt the variate generation for
+classroom explanation.
 
-  In the plot associated with the PDF, the maximum plotting height is
-  associated with 125\% of the maximum height of PDF. Any histogram cell
-  that extends above this limit will have three dots appearing above it.
+In the plot associated with the PDF, the maximum plotting height is
+associated with 125\\% of the maximum height of PDF. Any histogram cell
+that extends above this limit will have three dots appearing above it.
 }
 \examples{
  ifd(0.5, df1 = 1, df2 = 2, ncp = 10)
@@ -193,70 +197,55 @@ The algorithm for generating random variates from the FALSE distribution is
  set.seed(8675309)
  ifd(runif(10), 5, 5, showPDF = TRUE, showCDF = FALSE)
 
- \dontrun{
  ifd(runif(100), 5, 5, showPDF = TRUE, minPlotQuantile = 0.02, maxPlotQuantile = 0.98)
- }
 
  # plot the PDF and CDF without any variates
  ifd(NULL, 5, 5, showPDF = TRUE, showCDF = TRUE)
 
  # plot CDF with inversion and PDF using show
- \dontrun{
  ifd(runif(10), 5, 5, show = c(1,1,0))
- }
  ifd(runif(10), 5, 5, show = 6)
 
  # plot CDF with inversion and ECDF using show, using vunif
- \dontrun{
  ifd(vunif(10), 5, 5, show = c(1,0,1))
- }
  ifd(vunif(10), 5, 5, show = 5)
 
  # plot CDF with inversion, PDF, and ECDF using show
- \dontrun{
  ifd(vunif(10), 5, 5, show = c(1,1,1))
- }
  ifd(vunif(10), 5, 5, show = 7)
 
  # plot three different CDF+PDF+ECDF horizontal displays,
  # with title only on the first display
+ oldpar <- par(no.readonly = TRUE)
  par(mfrow = c(3,3))  # 3 rows, 3 cols, filling rows before columns
  set.seed(8675309)
- ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE)
- ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE, showTitle = FALSE)
- ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE, showTitle = FALSE)
+ ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE, restorePar = FALSE)
+ ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE, restorePar = FALSE, showTitle = FALSE)
+ ifd(runif(20), 5, 5, show = 7, respectLayout = TRUE, restorePar = TRUE,  showTitle = FALSE)
+ par(oldpar)
 
- # overlay visual exploration of ks.test results
- set.seed(54321)
- vals <- ifd (runif(10), 5, 5, showECDF = TRUE)
- D <- as.numeric(ks.test(vals, "pf", 5, 5)$statistic)
- for (x in seq(0.75, 1.25, by = 0.05)) {
-  y <- pf(x, 5, 5)
-  segments(x, y, x, y + D, col = "darkgreen", lwd = 2, xpd = NA)
- }
-
- \dontrun{
  # display animation of all components
  ifd(runif(10), 5, 5, show = 7, plotDelay = 0.1)
 
  # display animation of CDF and PDF components only
  ifd(runif(10), 5, 5, show = 5, plotDelay = 0.1)
 
- # pause at each stage of inversion
- ifd(runif(10), 5, 5, show = 7, plotDelay = -1)
+ if (interactive()) {
+   # interactive -- pause at each stage of inversion
+   ifd(runif(10), 5, 5, show = 7, plotDelay = -1)
  }
 
 }
 \seealso{
 \code{\link[=rf]{stats::rf}}
 
-\code{\link[=runif]{stats::runif}}, 
-         \code{\link[=vunif]{simEd::vunif}}
+\code{\link[=runif]{stats::runif}},
+\code{\link[=vunif]{simEd::vunif}}
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{random variate generation}
 \keyword{distribution}

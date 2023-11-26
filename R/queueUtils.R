@@ -26,9 +26,13 @@ GetDefaultDistroFcn <- function(ptype, isArrival, numServers = 1, asList = FALSE
   # Return default Markovian distribution
   if (ptype == "M" || !(ptype == "G" || ptype == "D")) 
   {
-    if (ptype != "M")
+    if (ptype != "M") {
+        # mod 23 Nov 2023
         warning(paste( (if(isArrival) "Inter-arrival" else "Service"), " time function '", ptype,
-                 "' has no defaults. Using default Markovian assumptions.", sep = ""))
+                 "' has no defaults. Using default Markovian assumptions.", sep = ""),
+                immediate. = TRUE)
+                 #"' has no defaults. Using default Markovian assumptions.", sep = ""))
+    }
 
     if (isArrival) {
        return(

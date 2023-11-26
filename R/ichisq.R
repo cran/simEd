@@ -37,18 +37,19 @@ ichisq <- function (u = runif(1), df, ncp = 0,
                 sampleColor     = "red3",
                 populationColor = "grey",
                 showTitle       = TRUE,
-                respectLayout   = FALSE, ...)
+                respectLayout   = FALSE, 
+                restorePar      = TRUE,  # add 23 Nov 2023
+                ...)
 {
   #############################################################################
 
   if(is.null(dev.list()))  dev.new(width=5, height=6)
   
-  warnVal <- options("warn")          # save current warning setting...
-  oldpar  <- par(no.readonly = TRUE)  # save current par settings
+  #warnVal <- options("warn")          # save current warning setting... (del 22 Nov 2023)
 
   #############################################################################
 
-  options(warn = -1)          # suppress warnings
+  #options(warn = -1)          # suppress warnings -- remove RE CRAN req't (del 22 Nov 2023)
 
   if (!is.null(u) && (min(u) <= 0 || max(u) >= 1))  stop("must have 0 < u < 1")
   if (length(u) == 0)  u <- NULL
@@ -58,12 +59,16 @@ ichisq <- function (u = runif(1), df, ncp = 0,
 
   checkQuants(minPlotQuantile, maxPlotQuantile, minex = 0, maxex = 1)
 
-  options(warn = 1)                   # set to immediate warnings
+  #options(warn = 1)                   # set to immediate warnings (del 22 Nov 2023)
 
   # Check for deprecated parameters
   for (arg in names(list(...))) {
-    if (arg == "maxPlotTime")
-      warning("'maxPlotTime' has been deprecated as of simEd v2.0.0")
+    if (arg == "maxPlotTime") {
+      # mod 23 Nov 2023
+      #warning("'maxPlotTime' has been deprecated as of simEd v2.0.0")
+      warning("'maxPlotTime' has been deprecated as of simEd v2.0.0",
+              immediate. = TRUE)
+    }
     else stop(paste("Unknown argument '", arg, "'", sep = ""))
   }
 
@@ -79,11 +84,18 @@ ichisq <- function (u = runif(1), df, ncp = 0,
   getQuantile <- function(d)
       if (no.ncp)  qchisq(d, df)  else  qchisq(d, df, ncp)  #q
 
-  titleStr <- paste("Chi-Squared (",
-                    "n = ", round(df, 3),
-                    (if(!is.null(ncp)) paste(",", sym$lambda, "=", round(ncp, 3))),
-                    ")", sep = "")
-
+  # using plotmath for x_0, gamma; bquote to use .() to evaluate args;
+  #  in bquote, ~ includes space b/w while * appends w/ no space b/w
+  if (no.ncp) {
+    titleStr <- as.expression(bquote(bold(
+                    "Chi-Squared (" ~ "n =" ~ .(round(df, 3)) ~ ")"
+                )))
+  } else {
+    titleStr <- as.expression(bquote(bold(
+                    "Chi-Squared (" ~ "n"    ~ "=" ~ .(round(df,  3)) * ","
+                                    ~ lambda ~ "=" ~ .(round(ncp, 3)) ~ ")"
+                )))
+  }
 
   #############################################################################
 
@@ -102,6 +114,7 @@ ichisq <- function (u = runif(1), df, ncp = 0,
     populationColor  = populationColor,
     showTitle        = showTitle,
     respectLayout    = respectLayout,
+    restorePar       = restorePar,    # add 23 Nov 2023
     getDensity       = getDensity,
     getDistro        = getDistro,
     getQuantile      = getQuantile,
@@ -112,11 +125,13 @@ ichisq <- function (u = runif(1), df, ncp = 0,
   )
 
   # resetting par and warning settings
-  options(warn = warnVal$warn)
-  if (!all(oldpar$mfrow == par()$mfrow)) {
-    # ?par claims "restoring all of [oldpar] is not wise", so reset only mfrow
-    par(mfrow = oldpar$mfrow)
-  }
+  #options(warn = warnVal$warn)  # remove RE CRAN req't (del 22 Nov 2023)
+
+  ## using on.exit for par RE CRAN suggest (del 22 Nov 2023)
+  #if (!all(oldpar$mfrow == par()$mfrow)) {
+  #  # ?par claims "restoring all of [oldpar] is not wise", so reset only mfrow
+  #  par(mfrow = oldpar$mfrow)
+  #}
 
   if (!is.null(out)) return(out)
 }

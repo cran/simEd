@@ -24,7 +24,7 @@ lehmer(
 
 \item{animate}{should the visual output be displayed.}
 
-\item{numSteps}{number of steps to animate; default value is Inf if 
+\item{numSteps}{number of steps to animate; default value is Inf if
 \code{plotDelay} is -1, or the size of the period
 otherwise.  Ignored if animate is false.}
 
@@ -36,27 +36,29 @@ otherwise.  Ignored if animate is false.}
 mode, where the user is queried for input to progress.}
 }
 \value{
-the entire period from the PRNG cycle, as integers in \{1, m-1\}.
+the entire period from the PRNG cycle, as a vector of integers in \{1, m-1\}.
 }
 \description{
-This function animates the processes of a basic Lehmer 
-pseudo-random number generator (PRNG). Also known in the literature as a 
-multiplicative linear congruential generator (MLCG), the generator 
-is based on the formula: 
+This function animates the processes of a basic Lehmer
+pseudo-random number generator (PRNG). Also known in the literature as a
+multiplicative linear congruential generator (MLCG), the generator
+is based on the formula:
 
 \deqn{X_{k+1} \equiv a \cdot X_k \pmod{m}}{%
       X_{k+1} = a * X_k mod m}
 
 where 'm' is the prime modulus, 'a' is the multiplier chosen from \{1, m-1\},
-and 'X_0' is the initial seed chosen from \{1, m-1\}.  The random numbers 
+and 'X_0' is the initial seed chosen from \{1, m-1\}.  The random numbers
 generated in (0,1) are X_\{k+1\}/m.
 }
 \examples{
  # Default case (m, a = 31, 13); small full period
  lehmer(plotDelay = 0, numSteps = 16)
- \dontrun{
- lehmer(plotDelay = -1)     # interactive mode
- lehmer(numSteps = 10, plotDelay = 0.01)   # auto-advance mode
+ lehmer(numSteps = 10, plotDelay = 0.1)   # auto-advance mode
+
+ if (interactive()) {
+   lehmer(plotDelay = -1)  # plotDelay -1 uses interactive mode
+ }
  
  # multiplier producing period of length 5, with different seeds
  lehmer(a = 8, m = 31, seed = 1, numSteps = 5, plotDelay = 0.1)
@@ -65,11 +67,10 @@ generated in (0,1) are X_\{k+1\}/m.
  # degenerate cases where seed does not appear in the final period
  lehmer(a = 12, m = 20, seed = 7, numSteps = 4, plotDelay = 0.1)  # length  4
  lehmer(a = 4, m = 6, seed = 1, numSteps = 1, plotDelay = 0.1)  # length 1
- }
  
 }
 \references{
 Lehmer, D.H. (1951).  Mathematical Models in Large-Scale Computing Units.
-   _Ann. Comput. Lab_.  Harvard University, **26**, 141-146.
+\emph{Ann. Comput. Lab}.  Harvard University, \strong{26}, 141-146.
 }
 \concept{random variate generation}

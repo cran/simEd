@@ -18,40 +18,40 @@ set.seed(seed, kind = NULL, normal.kind = NULL)
 }
 \value{
 \code{set.seed} returns \code{NULL}, invisibly, consistent with
-         \code{base::set.seed}.
+\code{base::set.seed}.
 }
 \description{
 \code{set.seed} in the \code{simEd} package allows the user to simultaneously
-  set the initial seed for both the \code{stats} and \code{simEd} variate
-  generators.
+set the initial seed for both the \code{stats} and \code{simEd} variate
+generators.
 }
 \details{
 This function intentionally masks the \code{base::set.seed} function,
-  allowing the user to simultaneously set the initial seed for the
-  \code{stats} variate generators (by explicitly calling \code{base::set.seed})
-  and for the \code{simEd} variate generators (by explicitly setting up
-  10 streams using the \code{rstream.mrg32k3a} generator from the
-  \code{rstream} package).
+allowing the user to simultaneously set the initial seed for the
+\code{stats} variate generators (by explicitly calling \code{base::set.seed})
+and for the \code{simEd} variate generators (by explicitly setting up
+10 streams using the \code{rstream.mrg32k3a} generator from the
+\code{rstream} package).
 
-  Any call to \code{set.seed} re-initializes the seed for the \code{stats}
-  and \code{simEd} generators as if no seed had been set.
-  If called with \code{seed = NULL}, both the \code{stats} and \code{simEd}
-  variate generators are re-initialized using a random seed based on the
-  system clock.
+Any call to \code{set.seed} re-initializes the seed for the \code{stats}
+and \code{simEd} generators as if no seed had been set.
+If called with \code{seed = NULL}, both the \code{stats} and \code{simEd}
+variate generators are re-initialized using a random seed based on the
+system clock.
 
-  If the user wishes to set the seed for the \code{stats} generators without
-  affecting the seeds of the \code{simEd} generators, an explicit call to
-  \code{base::set.seed} can be made.
+If the user wishes to set the seed for the \code{stats} generators without
+affecting the seeds of the \code{simEd} generators, an explicit call to
+\code{base::set.seed} can be made.
 
-  Note that once \code{set.seed} is called, advancing the \code{simEd} generator
-  state using any of the stream-based \code{simEd} variate generators will not
-  affect the state of the non-stream-based \code{stats} generators, and
-  vice-versa.
+Note that once \code{set.seed} is called, advancing the \code{simEd} generator
+state using any of the stream-based \code{simEd} variate generators will not
+affect the state of the non-stream-based \code{stats} generators, and
+vice-versa.
 
-  As soon as the \code{simEd} package is attached (i.e., when \code{simEd} is
-  the parent of the global environment), \code{simEd::set.seed} becomes the
-  default for a call to \code{set.seed}.  When the \code{simEd} package is
-  detached, \code{base::set.seed} will revert to the default.
+As soon as the \code{simEd} package is attached (i.e., when \code{simEd} is
+the parent of the global environment), \code{simEd::set.seed} becomes the
+default for a call to \code{set.seed}.  When the \code{simEd} package is
+detached, \code{base::set.seed} will revert to the default.
 }
 \examples{
  set.seed(8675309)
@@ -79,8 +79,8 @@ This function intentionally masks the \code{base::set.seed} function,
 \code{\link[base:set.seed]{base::set.seed}}
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{random variate generation}

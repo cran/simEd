@@ -1,4 +1,4 @@
-## -------------------------------------------------------------------------
+#)# -------------------------------------------------------------------------
 #' Lehmer Generator Visualization
 #'
 #' @description This function animates the processes of a basic Lehmer 
@@ -25,7 +25,7 @@
 #' @param plotDelay     wait time between transitioning; -1 (default) for interactive
 #'                      mode, where the user is queried for input to progress.
 #'
-#' @return the entire period from the PRNG cycle, as integers in \{1, m-1\}.
+#' @returns the entire period from the PRNG cycle, as a vector of integers in \{1, m-1\}.
 #'
 #' @references
 #' Lehmer, D.H. (1951).  Mathematical Models in Large-Scale Computing Units.
@@ -38,9 +38,11 @@
 #' @examples
 #'  # Default case (m, a = 31, 13); small full period
 #'  lehmer(plotDelay = 0, numSteps = 16)
-#'  \dontrun{
-#'  lehmer(plotDelay = -1)     # interactive mode
-#'  lehmer(numSteps = 10, plotDelay = 0.01)   # auto-advance mode
+#'  lehmer(numSteps = 10, plotDelay = 0.1)   # auto-advance mode
+#'
+#'  if (interactive()) {
+#'    lehmer(plotDelay = -1)  # plotDelay -1 uses interactive mode
+#'  }
 #'  
 #'  # multiplier producing period of length 5, with different seeds
 #'  lehmer(a = 8, m = 31, seed = 1, numSteps = 5, plotDelay = 0.1)
@@ -49,7 +51,6 @@
 #'  # degenerate cases where seed does not appear in the final period
 #'  lehmer(a = 12, m = 20, seed = 7, numSteps = 4, plotDelay = 0.1)  # length  4
 #'  lehmer(a = 4, m = 6, seed = 1, numSteps = 1, plotDelay = 0.1)  # length 1
-#'  }
 #'  
 #' @export
 ################################################################################
@@ -65,32 +66,47 @@ lehmer <- function(
                 #fontScaleRatio = c(3, 1)  # save for future release
           ) 
 {
+  if (animate)
+  {
+    # using on.exit w/ par per CRAN suggestion (add 22 Nov 2023)
+    oldpar <- par(no.readonly = TRUE)  # save current par settings (add 22 Nov 2023)
+    on.exit(par(oldpar))               # add (22 Nov 2023)
+  }
+
+  ################################################################################
+  # variables defined w/in scope of lehmer that make "good use of 
+  # superassignment" for stateful function use (mod 23 Nov 2023)
+  # (https://stat.ethz.ch/pipermail/r-help/2011-April/275905.html)
+  # (https://adv-r.hadley.nz/function-factories.html#stateful-funs)
+  #
+  plottedXs <- c() # to be updated when period determined
+  plottedYs <- c()
+  ################################################################################
+
   #############################################################################
   # Do parameter checking and handling; stop execution or warn if erroneous
   #############################################################################
-  {
-    checkVal(m, "i", min = 1)
-    checkVal(a, "i", min = 1, max = m - 1)
-    checkVal(seed, "i", min = 1, max = m - 1)
-    checkVal(numSteps, "i", min = 1, na = TRUE)
-    if (a >= m) 
-      stop("'a' must be strictly less than 'm'")
-    if (m %% a == 0) 
-      stop("'a' cannot be a factor of 'm'")
+  checkVal(m, "i", min = 1)
+  checkVal(a, "i", min = 1, max = m - 1)
+  checkVal(seed, "i", min = 1, max = m - 1)
+  checkVal(numSteps, "i", min = 1, na = TRUE)
+  if (a >= m) 
+    stop("'a' must be strictly less than 'm'")
+  if (m %% a == 0) 
+    stop("'a' cannot be a factor of 'm'")
 
-    checkVal(animate,   "l")
-    checkVal(title,     "c", na = TRUE, null = TRUE)
-    checkVal(showTitle, "l")
+  checkVal(animate,   "l")
+  checkVal(title,     "c", na = TRUE, null = TRUE)
+  checkVal(showTitle, "l")
 
-    if (!isValNum(plotDelay) || (plotDelay < 0 && plotDelay != -1))
-      stop("'plotDelay' must be a numeric value (in secs) >= 0 or -1 (interactive mode)")
-    if (plotDelay > 10)
-      message("'plotDelay' of ", plotDelay, "s may give undesirably long time between plots")
-    
-    #if (any(is.na(fontScaleRatio)) || length(fontScaleRatio) < 2) {
-    #  stop("fontScaleRatio must be a list of two values")
-    #}
-  }
+  if (!isValNum(plotDelay) || (plotDelay < 0 && plotDelay != -1))
+    stop("'plotDelay' must be a numeric value (in secs) >= 0 or -1 (interactive mode)")
+  if (plotDelay > 10)
+    message("'plotDelay' of ", plotDelay, "s may give undesirably long time between plots")
+  
+  #if (any(is.na(fontScaleRatio)) || length(fontScaleRatio) < 2) {
+  #  stop("fontScaleRatio must be a list of two values")
+  #}
 
   #############################################################################
 
@@ -349,8 +365,9 @@ lehmer <- function(
   ##  @param xn      Point just generated; flashes as light blue
   ##  @param period  How long should the generated list be
   ####################################################################################
-  plottedXs <- c() # to be updated when period determined
-  plottedYs <- c()
+  #plottedXs <- c() # to be updated when period determined  (del 23 Nov 2023)
+  #plottedYs <- c() #                                       (del 23 Nov 2023)
+
   DrawLinePlot <- function(xn, seed, seedPresent = TRUE)
   {
     lineplotRange <- c(10, 190, 20, 50)        
@@ -468,11 +485,17 @@ lehmer <- function(
     # computationally expensive to pass these with every function call; also, 
     # swap the seed (first element if seed not present) to the end for this
     # since we want to plot it last
-    plottedXs <<- c( Xs[2:length(Xs)], Xs[1] )
-    plottedYs <<- rep(0, length(plottedXs))
+    if (length(Xs) >= 2) {
+        plottedXs <<- c( Xs[2:length(Xs)], Xs[1] )
+        plottedYs <<- rep(0, length(plottedXs))
+    } else {
+        # add 23 Nov 2023: additional logic to handle 1-length degenerate case
+        plottedXs <<- c( Xs[1] )
+        plottedYs <<- rep(0, length(plottedXs))
+    }
 
     if (is.na(numSteps))
-        numSteps <- if (plotDelay == -1) Inf else period
+        numSteps <- if (animate && plotDelay == -1) Inf else period
 
     pauseData <- SetPausePlot(
       plotDelay = plotDelay, 

@@ -25,12 +25,11 @@ ssq(
   saveServerStatus = FALSE,
   showOutput = TRUE,
   animate = FALSE,
-  show = NULL,
-  showQueue = TRUE,
+  showQueue = NULL,
   showSkyline = NULL,
-  showSkylineSystem = TRUE,
-  showSkylineQueue = TRUE,
-  showSkylineServer = TRUE,
+  showSkylineSystem = FALSE,
+  showSkylineQueue = FALSE,
+  showSkylineServer = FALSE,
   showTitle = TRUE,
   showProgress = TRUE,
   plotQueueFcn = defaultPlotSSQ,
@@ -47,7 +46,7 @@ ssq(
 random number generator; NULL seeds using system clock)}
 
 \item{interarrivalFcn}{function for generating interarrival times for queue simulation.
-Default value (\code{NA}) will result in use of default interarrival 
+Default value (\code{NA}) will result in use of default interarrival
 function based on \code{interarrivalType}.  See examples.}
 
 \item{serviceFcn}{function for generating service times for queue simulation.
@@ -61,19 +60,19 @@ constant value 1.  Default is "M".}
 
 \item{serviceType}{string representation of desired service process .
 Options are "M" -- exponential with rate 10/9;
-"G" -- uniform(0, 1.8), having mean 9/10; and "D" -- 
- deterministic with constant value 9/10.  Default is "M".}
+"G" -- uniform(0, 1.8), having mean 9/10; and "D" --
+deterministic with constant value 9/10.  Default is "M".}
 
 \item{maxTime}{maximum time to simulate}
 
 \item{maxDepartures}{maximum number of customer departures to process}
 
-\item{maxInSystem}{maximum number of customers that the system can hold (server(s) plus queue). 
+\item{maxInSystem}{maximum number of customers that the system can hold (server(s) plus queue).
 Infinite by default.}
 
 \item{maxEventsPerSkyline}{maximum number of events viewable at a time in the skyline plot.
 A large value for this parameter may result in plotting delays.
-This parameter does not impact the final plotting, which will show all 
+This parameter does not impact the final plotting, which will show all
 end-of-simulation results.}
 
 \item{saveAllStats}{if \code{TRUE}, returns all vectors of statistics (see below)
@@ -101,9 +100,6 @@ server status (0:idle, 1:busy) for whenever the status changes}
 
 \item{animate}{logical; if \code{FALSE}, no animation plots will be shown.}
 
-\item{show}{shorthand specifier for \code{showQueue} and \code{showSkyline}. Use 1
-for queue, 2 for skyline, 3 for both (chmod component style).}
-
 \item{showQueue}{logical; if \code{TRUE}, displays a visualization of the queue}
 
 \item{showSkyline}{If \code{NULL} (default), defers to each individual showSkyline...
@@ -111,19 +107,19 @@ parameter below; otherwise, supersedes individual showSkyline...
 parameter values.
 If \code{TRUE}, displays full skyline plot; \code{FALSE} suppresses
 skyline plot. Can alternatively be specified using chmod-like octal
-component specification: use 1, 2, 4 for system, queue, and server 
+component specification: use 1, 2, 4 for system, queue, and server
 respectively, summing to indicate desired combination (e.g., 7 for all).
 Can also be specified as a binary vector (e.g., c(1,1,1) for all).}
 
-\item{showSkylineSystem}{logical; if \code{TRUE}, includes number in system 
+\item{showSkylineSystem}{logical; if \code{TRUE}, includes number in system
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
-\item{showSkylineQueue}{logical; if \code{TRUE}, includes number in queue 
+\item{showSkylineQueue}{logical; if \code{TRUE}, includes number in queue
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
-\item{showSkylineServer}{logical; if \code{TRUE}, includes number in server 
+\item{showSkylineServer}{logical; if \code{TRUE}, includes number in server
 as part of skyline plot.  Value for \code{showSkyline}
 supersedes this parameter's value.}
 
@@ -131,19 +127,19 @@ supersedes this parameter's value.}
 
 \item{showProgress}{if TRUE, displays a progress bar on screen during no-animation execution}
 
-\item{plotQueueFcn}{plotting function to display queue visualization. 
+\item{plotQueueFcn}{plotting function to display queue visualization.
 By default, this is provided by \code{defaultPlotSSQ}. Please refer to
 that associated help for more details about required arguments.}
 
-\item{plotSkylineFcn}{plotting function to display Skyline visualization. 
+\item{plotSkylineFcn}{plotting function to display Skyline visualization.
 By default, this is provided by \code{defaultPlotSkyline}.  Please refer
 to that associated help for more details about required arguments.}
 
 \item{jobImage}{a vector of URLs/local addresses of images to use as jobs. Requires
-package \code{'Magick'}.}
+package \code{'magick'}.}
 
-\item{plotDelay}{a positive numeric value indicating seconds between plots. 
-A value of -1 enters 'interactive' mode, where the state will pause 
+\item{plotDelay}{a positive numeric value indicating seconds between plots.
+A value of -1 enters 'interactive' mode, where the state will pause
 for user input at each step.  A value of 0 will display only the final
 end-of-simulation plot.}
 
@@ -152,56 +148,56 @@ will be respected.}
 }
 \value{
 The function returns a list containing:
-   \itemize{
-     \item the number of arrivals to the system (\code{customerArrivals}),
-     \item the number of customers processed (\code{customerDepartures}),
-     \item the ending time of the simulation (\code{simulationEndTime}),
-     \item average wait time in the queue (\code{avgWait}),
-     \item average time in the system (\code{avgSojourn}),
-     \item average number in the system (\code{avgNumInSystem}),
-     \item average number in the queue (\code{avgNumInQueue}), and
-     \item server utilization (\code{utilization}).
-   }
-   of the queue as computed by the simulation.
-   When requested via the ``save...'' parameters, the list may also contain:
-   \itemize{
-     \item a vector of interarrival times (\code{interarrivalTimes}),
-     \item a vector of wait times (\code{waitTimes}),
-     \item a vector of service times (\code{serviceTimes}),
-     \item a vector of sojourn times (\code{sojournTimes}),
-     \item two vectors (time and count) noting changes to number in the system
-          (\code{numInSystemT}, \code{numInSystemN}),
-     \item two vectors (time and count) noting changes to number in the queue
-          (\code{numInQueueT}, \code{numInQueueN}), and
-     \item two vectors (time and status) noting changes to server status
-          (\code{serverStatusT}, \code{serverStatusN}).
-   }
+\itemize{
+\item the number of arrivals to the system (\code{customerArrivals}),
+\item the number of customers processed (\code{customerDepartures}),
+\item the ending time of the simulation (\code{simulationEndTime}),
+\item average wait time in the queue (\code{avgWait}),
+\item average time in the system (\code{avgSojourn}),
+\item average number in the system (\code{avgNumInSystem}),
+\item average number in the queue (\code{avgNumInQueue}), and
+\item server utilization (\code{utilization}).
+}
+of the queue as computed by the simulation.
+When requested via the ``save...'' parameters, the list may also contain:
+\itemize{
+\item a vector of interarrival times (\code{interarrivalTimes}),
+\item a vector of wait times (\code{waitTimes}),
+\item a vector of service times (\code{serviceTimes}),
+\item a vector of sojourn times (\code{sojournTimes}),
+\item two vectors (time and count) noting changes to number in the system
+(\code{numInSystemT}, \code{numInSystemN}),
+\item two vectors (time and count) noting changes to number in the queue
+(\code{numInQueueT}, \code{numInQueueN}), and
+\item two vectors (time and status) noting changes to server status
+(\code{serverStatusT}, \code{serverStatusN}).
+}
 }
 \description{
 A next-event simulation of a single-server queue, with
-   extensible arrival and service processes.
+extensible arrival and service processes.
 }
 \details{
 Implements a next-event implementation of a single-server queue simulation.
 
 The \code{seed} parameter can take one of three valid
-   argument types:
-   \itemize{
-     \item \code{NA} (default), which will use the current state of the random
-          number generator without explicitly setting a new seed (see examples);
-     \item a positive integer, which will be used as the initial seed passed in
-          an explicit call to \code{\link{set.seed}}; or
-     \item \code{NULL}, which will be passed in an explicit call to to
-         \code{\link{set.seed}}, thereby setting the initial seed using the
-         system clock.
-  }
+argument types:
+\itemize{
+\item \code{NA} (default), which will use the current state of the random
+number generator without explicitly setting a new seed (see examples);
+\item a positive integer, which will be used as the initial seed passed in
+an explicit call to \code{\link{set.seed}}; or
+\item \code{NULL}, which will be passed in an explicit call to to
+\code{\link{set.seed}}, thereby setting the initial seed using the
+system clock.
+}
 }
 \examples{
- # process 200 arrivals, R-provided seed (via NULL seed)
- ssq(200, NULL)
+ # process 100 arrivals, R-provided seed (via NULL seed)
+ ssq(100, NULL)
 
- ssq(maxArrivals = 200, seed = 54321)
- ssq(maxDepartures = 200, seed = 54321)
+ ssq(maxArrivals = 100, seed = 54321)
+ ssq(maxDepartures = 100, seed = 54321)
  ssq(maxTime = 100, seed = 54321)
 
  ############################################################################
@@ -228,6 +224,10 @@ The \code{seed} parameter can take one of three valid
  # example to show use of (simple) trace data for arrivals and service times;
  # ssq() will need one more interarrival (arrival) time than jobs processed
  #
+ arrivalTimes      <- NULL
+ interarrivalTimes <- NULL
+ serviceTimes      <- NULL
+
  initTimes <- function() {
      arrivalTimes      <<- c(15, 47, 71, 111, 123, 152, 232, 245, 99999)
      interarrivalTimes <<- c(arrivalTimes[1], diff(arrivalTimes))
@@ -236,7 +236,7 @@ The \code{seed} parameter can take one of three valid
 
  getInterarr <- function() {
      nextInterarr <- interarrivalTimes[1]
-     interarrivalTimes <<- interarrivalTimes[-1] # remove 1st element globally
+     interarrivalTimes <<- interarrivalTimes[-1]  # remove 1st element globally
      return(nextInterarr)
  }
 
@@ -257,6 +257,9 @@ The \code{seed} parameter can take one of three valid
  ############################################################################
  # example to show use of (simple) trace data for arrivals and service times,
  # allowing for reuse (recycling) of trace data times
+ arrivalTimes      <- NULL
+ interarrivalTimes <- NULL
+ serviceTimes      <- NULL
 
  initArrivalTimes <- function() {
    arrivalTimes      <<- c(15, 47, 71, 111, 123, 152, 232, 245)
@@ -264,7 +267,7 @@ The \code{seed} parameter can take one of three valid
  }
 
  initServiceTimes <- function() {
-     serviceTimes      <<- c(43, 36, 34, 30, 38, 30, 31, 29)
+     serviceTimes    <<- c(43, 36, 34, 30, 38, 30, 31, 29)
  }
 
  getInterarr <- function() {
@@ -293,32 +296,32 @@ The \code{seed} parameter can take one of three valid
  ############################################################################
  # Testing with visualization
 
- \dontrun{
  # Visualizing ssq with a set seed, infinite queue capacity, 20 arrivals,
  # interactive mode (default), showing skyline for all 3 attributes (default)
- ssq(seed = 1234, maxArrivals = 20, animate = TRUE)
+ if (interactive()) {
+   ssq(seed = 1234, maxArrivals = 20, animate = TRUE)
  }
 
- # Same as above, but jump to final queue visualization
+ # Same as above, but jump to final queue visualization using plotDelay 0
  ssq(seed = 1234, maxArrivals = 20, animate = TRUE, plotDelay = 0)
 
  # Perform simulation again with finite queue of low capacity. Note same
- # variable generation but different outcomes due to rejection pathway
+ # variate generation but different outcomes due to rejection pathway
  ssq(seed = 1234, maxArrivals = 25, animate = TRUE, maxInSystem = 5, plotDelay = 0)
 
- # Using default distributions to make a default M/G/1 Queue
+ # Using default distributions to simulate a default M/G/1 Queue
  ssq(seed = 1234, maxDepartures = 10, interarrivalType = "M", serviceType = "G", 
      animate = TRUE, plotDelay = 0)
 
 }
 \seealso{
 \code{\link{rstream}}, \code{\link{set.seed}},
-         \code{\link[=runif]{stats::runif}}
+\code{\link[=runif]{stats::runif}}
 }
 \author{
-Barry Lawson (\email{blawson@richmond.edu}), \cr
-   Larry Leemis (\email{leemis@math.wm.edu}), \cr
-   Vadim Kudlay (\email{vadim.kudlay@richmond.edu})
+Barry Lawson (\email{blawson@bates.edu}), \cr
+Larry Leemis (\email{leemis@math.wm.edu}), \cr
+Vadim Kudlay (\email{vkudlay@nvidia.com})
 }
 \concept{queueing}
 \keyword{utilities}
