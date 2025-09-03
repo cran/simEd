@@ -1,6 +1,6 @@
 Package: simEd
 Title: Simulation Education
-Version: 2.0.1
+Version: 2.0.2
 Authors@R: c(
   person("Barry", "Lawson", email = "blawson@bates.edu", role = c("aut","cre","cph")),
   person("Larry", "Leemis", email = "leemis@math.wm.edu", role = "aut"),
@@ -25,12 +25,12 @@ Description: Contains various functions to be used for simulation education,
 License: MIT + file LICENSE
 LazyData: true
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2023-11-26 13:08:36 UTC; blawson
+Packaged: 2025-09-03 03:01:56 UTC; blawson
 Author: Barry Lawson [aut, cre, cph],
   Larry Leemis [aut],
   Vadim Kudlay [aut]
 Maintainer: Barry Lawson <blawson@bates.edu>
 Repository: CRAN
-Date/Publication: 2023-11-26 23:20:13 UTC
+Date/Publication: 2025-09-03 03:20:02 UTC

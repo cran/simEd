@@ -1,6 +1,6 @@
 #' \packageTitle{simEd}
 #'
-#' @docType  package
+"_PACKAGE"
 #' @name     simEd-package
 #' @aliases  simEd
 #' @keywords package
@@ -29,7 +29,7 @@
 #'  }
 #'
 #'  The package contains variate generators capable of independent streams
-#'  (based on Josef Leydold's \code{\link{rstream}} package) and antithetic
+#'  (based on Josef Leydold's \code{\link[rstream]{rstream}} package) and antithetic
 #'  variates for four discrete and eleven continuous distributions:
 #'  \itemize{
 #'     \item discrete: \code{\link{vbinom}}, \code{\link{vgeom}},

@@ -1,3 +1,6 @@
+# simEd 2.0.2
+* Corrected Rd \link{} targets having missing package anchors.
+
 # simEd 2.0.1
 
 * Updated author email addresses to current affiliations.

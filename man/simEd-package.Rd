@@ -6,6 +6,8 @@
 \alias{simEd}
 \title{\packageTitle{simEd}}
 \description{
+Contains various functions to be used for simulation education, including simple Monte Carlo simulation functions, queueing simulation functions, variate generation functions capable of producing independent streams and antithetic variates, functions for illustrating random variate generation for various discrete and continuous distributions, and functions to compute time-persistent statistics. Also contains functions for visualizing: event-driven details of a single-server queue model; a Lehmer random number generator; variate generation via acceptance-rejection; and of generating a non-homogeneous Poisson process via thinning. Also contains two queueing data sets (one fabricated, one real-world) to facilitate input modeling. More details on the use of these functions can be found in Lawson and Leemis (2015) \doi{10.1109/WSC.2017.8248124}, in Kudlay, Lawson, and Leemis (2020) \doi{10.1109/WSC48552.2020.9384010}, and in Lawson and Leemis (2021) \doi{10.1109/WSC52266.2021.9715299}.
+
 \packageDescription{simEd}
 
 \strong{Request From Authors:}
@@ -29,7 +31,7 @@ This package contains animation functions for visualizing:
 }
 
 The package contains variate generators capable of independent streams
-(based on Josef Leydold's \code{\link{rstream}} package) and antithetic
+(based on Josef Leydold's \code{\link[rstream]{rstream}} package) and antithetic
 variates for four discrete and eleven continuous distributions:
 \itemize{
 \item discrete: \code{\link{vbinom}}, \code{\link{vgeom}},
@@ -107,6 +109,15 @@ this package.
 }
 
 \author{
+\strong{Maintainer}: Barry Lawson \email{blawson@bates.edu} [copyright holder]
+
+Authors:
+\itemize{
+  \item Larry Leemis \email{leemis@math.wm.edu}
+  \item Vadim Kudlay \email{vkudlay@nvidia.com}
+}
+
+
 \packageAuthor{simEd}
 Maintainer: \packageMaintainer{simEd}
 }

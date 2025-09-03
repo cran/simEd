@@ -321,7 +321,7 @@ currently available servers.
 
 }
 \seealso{
-\code{\link{rstream}}, \code{\link{set.seed}},
+\code{\link[rstream]{rstream}}, \code{\link{set.seed}},
 \code{\link[=runif]{stats::runif}}
 }
 \author{

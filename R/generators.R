@@ -1297,7 +1297,7 @@ vt <- function(n,
 #'
 #' @param stream if \code{NULL} (default), uses \code{\link[=runif]{stats::runif}}
 #'     to generate uniform variates;
-#'     otherwise, an integer in 1:25 indicates the \code{\link{rstream}} stream
+#'     otherwise, an integer in 1:25 indicates the \code{\link[rstream]{rstream}} stream
 #'     from which to generate uniform variates;
 #'
 #' @export
